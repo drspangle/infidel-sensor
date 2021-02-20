@@ -17,7 +17,7 @@ The main idea is to use the sensor to correct for filament diameter deviations w
 Based on this proof-of-concept: https://www.youmagine.com/designs/filament-diameter-sensor
 
 ## Assembly and Setup
-Mechanical assembly instructions are found at: https://www.youtube.com/watch?v=RYgdLPe_T0c
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/RYgdLPe_T0c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### Calibration
 - Flash board with calibration.ino
