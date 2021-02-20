@@ -5,7 +5,7 @@
      href="http://creativecommons.org/publicdomain/zero/1.0/">
     <img src="https://licensebuttons.net/p/zero/1.0/80x15.png" style="border-style: none;" alt="CC0" />
   </a>
-  <br />
+  Originally created by Thomas Sanladerer
 </p>
 
 *A cheap, yet precise filament diameter sensor, intended to compensate for filament diameter deviations in real-time.*
