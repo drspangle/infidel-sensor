@@ -32,8 +32,9 @@ Choose one:
 - SMT control board (which is populated; Gerber files and component specifications are included) 
 - THT control board
 
-- Suitable programmer for ATTiny85 (eg USBtinyISP)
+Also required:
 
+- Suitable programmer for ATTiny85 (eg USBtinyISP)
 - 1 SS495A linear hall effect sensor (or comparable)
 
 ### Fasteners
