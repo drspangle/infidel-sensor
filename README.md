@@ -1,7 +1,15 @@
 # Inline Filament Diameter Estimator, Lowcost (InFiDEL)
 
+*A cheap, yet precise filament diameter sensor, intended to compensate for filament diameter deviations in real-time.*
+
+The InFiDEL is a cheap (< $5) filament diameter sensor intended for use with FDM 3d printers.
+The sensor can be calibrated to provide surprisingly precise filament diameter readings in real-time. 
+The main idea is to use the sensor to correct for filament diameter deviations while printing.
+
+Based on this proof-of-concept: https://www.youmagine.com/designs/filament-diameter-sensor
+
 ## Assembly and Setup
-Mechanical assembly instructions are shown at https://www.youtube.com/watch?v=RYgdLPe_T0c
+Mechanical assembly instructions are found at: https://www.youtube.com/watch?v=RYgdLPe_T0c
 
 ### Calibration
 - Flash board with calibration.ino
