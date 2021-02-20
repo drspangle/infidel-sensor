@@ -6,16 +6,6 @@
     <img src="https://licensebuttons.net/p/zero/1.0/80x15.png" style="border-style: none;" alt="CC0" />
   </a>
   <br />
-  To the extent possible under law,
-  <a rel="dct:publisher"
-     href="https://github.com/drspangle/infidel-sensor/">
-    <span property="dct:title">Daniel Smullen</span></a>
-  has waived all copyright and related or neighboring rights to
-  <span property="dct:title">Inline Filament Diameter Estimator, Lowcost (InFiDEL)</span>.
-This work is published from:
-<span property="vcard:Country" datatype="dct:ISO3166"
-      content="US" about="https://github.com/drspangle/infidel-sensor/">
-  United States</span>.
 </p>
 
 *A cheap, yet precise filament diameter sensor, intended to compensate for filament diameter deviations in real-time.*
