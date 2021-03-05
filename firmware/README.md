@@ -35,7 +35,8 @@ After Programming the Led flasches 2 times
 ![Alt text](host_to_sensor_arduino.PNG?raw=true "Wire Disgramm")
 
 Connect the the Sensor to the Hostboard like Arduino Uno or Mega
-Programm the Host with Host_ee_prog.ino nad start the Console with 19200 boud
+
+Programm the Host with Host_ee_prog.ino abd start the Console with 19200 baud
 
 ## Console
 
