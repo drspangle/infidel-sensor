@@ -38,11 +38,14 @@ void setup() {
   read_table();
   print_table();
 
-  Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val):"));
+  Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val / 5 - Ongoing raw read):"));
   
 }
 
 void loop() {
+
+  static uint8_t ongoing_read = 0;
+  static uint8_t ongoing_cnt = 0;
 
   if (Serial.available()) {
     byte inByte_uart = Serial.read();
@@ -70,6 +73,12 @@ void loop() {
         inByte_uart = Serial.read(); //read linefeed from buffer
         get_value_from_uart();
       break;
+      case '5':
+        if(ongoing_read == 0)
+          ongoing_read = 1;
+        else
+          ongoing_read = 0;
+      break;
       case 10:
       break;
       case 13:
@@ -78,12 +87,21 @@ void loop() {
         Serial.println(F("Error wrong command"));
       break;
     }
-    
-      
   }
-
+  else if(ongoing_read == 1){
+    if(ongoing_cnt < 50){
+      ongoing_cnt++;
+    }
+    else{
+      ongoing_cnt = 0;
+      readInfidel_raw();
+      Serial.print(F("Diameter [mm] / [ADC]: "));
+      Serial.print(infidelin, 3);
+      Serial.print(F(" / RAW: "));
+      Serial.println(infidelin_raw,0);
+    }
+  }
   
-
   delay(10);
 }
 
