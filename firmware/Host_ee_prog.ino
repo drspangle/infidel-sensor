@@ -1,9 +1,9 @@
-/*  Firmware for the Host for the SS495) hall-sensor based filament diameter sensor.
-    Reads and send I2C and schow Values, 
+/*  Firmware for the Host for the (SS495) hall-sensor based filament diameter sensor.
+    Reads and send I2C and show Values, 
 
     Built for Arduino Uno oder Mega
 
-    Licensed CC-0 / Public Domain by Thomas Sanladerer
+    Licensed CC-0 / Public Domain 
 
     by Michael Doppler (midopple)
 */
@@ -31,13 +31,15 @@ float infidelin_raw = 0;
 short dia_table[numtemps][2];
 
 void setup() {
+
   Wire.begin();        // join i2c bus (address optional for host)
   Serial.begin(19200);  // start serial for output
 
-  read_version();
-  read_table();
-  print_table();
+  Serial.println(F("Infidel Sensor Programmer"));
 
+  //Check if the Device at Adress is Online
+  check_I2C_adress();
+   
   Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val / 5 - Ongoing raw read):"));
   
 }
@@ -78,6 +80,11 @@ void loop() {
           ongoing_read = 1;
         else
           ongoing_read = 0;
+      break;
+      case 'h':
+      case 'H':
+        Serial.println(F("Commands:"));
+        Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val / 5 - Ongoing raw read)"));
       break;
       case 10:
       break;
@@ -258,5 +265,34 @@ void get_value_from_uart(){
     Serial.println(F("Wrong Value for IDX 0-5"));
   }
   
+}
+
+
+void check_I2C_adress(){
+  
+  uint8_t I2C_error = 0;
+  
+  Serial.println(F("Scanning..."));
+  Wire.beginTransmission(INFIDELADD);
+  I2C_error = Wire.endTransmission();
+
+  if(I2C_error == 0){
+    Serial.print(F("I2C device found at address "));Serial.print(INFIDELADD,DEC);Serial.println(F(" "));Serial.println(F(" "));
+    read_version();
+    read_table();
+    print_table();
+  }
+  else if (I2C_error==1){
+    Serial.println(F("data too long to fit in transmit buffer "));
+  }
+  else if (I2C_error==2){
+    Serial.println(F("received NACK on transmit of address  "));
+  }
+  else if (I2C_error==3){
+    Serial.println(F("received NACK on transmit of data  "));
+  }
+  else if (I2C_error==4){
+    Serial.print(F("I2C Error at address / no device found "));Serial.print(INFIDELADD,DEC);Serial.println(F(" "));
+  }
 }
   
