@@ -13,7 +13,7 @@
 | ------ | ------ |
 | calibration.ino | First Testsoftware by Thomas Sanladerer, it send the ADC raw Value over I2C, add some Drill diameters to the Sensor and note the ADC Value, put the Values to the Code driver.ino and comile it new |
 | driver.ino | Code for the Sensor, it use a fix Table to convert the ADC to Diameter, send 2 byte over I2C no Analog out |
-| host-example.ino | Read over I2C the 2 byte of Diameter and Display it over the Uart, Test teh Sensor |
+| host-example.ino | Read over I2C the 2 byte of Diameter and Display it over the Uart, Test the Sensor |
 | Host_ee_prog.ino | Code for the Host Arduino, communicate with the Sensor in two way an have a simple Uart Console to to the calibration and Sensor testing |
 | Infidel_release_ee.ino | Firmware for the Sensor, Table in EE-Prom, Set Values over I2C |
 
@@ -28,7 +28,7 @@
 Load the Code, wire the ISP Programm to the ISP Port on the Sensor and Programm it
 Sketch --> Upload with Programmer
 
-After Programming the Led flasches 2 times
+After Programming the Led flashes 2 times
 
 ## Wire to the Hostboard
 
@@ -36,7 +36,7 @@ After Programming the Led flasches 2 times
 
 Connect the the Sensor to the Hostboard like Arduino Uno or Mega
 
-Programm the Host with Host_ee_prog.ino abd start the Console with 19200 baud
+Programm the Host with Host_ee_prog.ino and start the Console with 19200 baud
 
 ## Console
 
@@ -60,6 +60,8 @@ Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel V
 | 2 | Read the Version | Version: 1.11 |
 | 3 | Read the Diameter Table | Table [idx] [ADC] [DIA in um] |
 | 4 | Set the Value in the Table | Input values for Table [IDX],[ADC],[DIA um] like (1,619,2090) |
+| 5 | Ongoing reading the ADC rae Value, stop when the command 5 is send one more time |
+| h | show the Commandlist |
 
 ## Calibration
 
