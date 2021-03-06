@@ -214,7 +214,7 @@ void get_value_from_uart(){
   Serial.println(dia_val,DEC);
 
   if(idx >= 0 && idx < numtemps){
-    if(ADC_val >= 0 && ADC_val < 1024 && dia_val >= 0 && dia_val < 3000)
+    if(ADC_val >= 0 && ADC_val < 1024 && dia_val >= 0 && dia_val <= 3000)
     {
       b1 = floor(ADC_val / 256);
       b2 = (ADC_val % 256);
