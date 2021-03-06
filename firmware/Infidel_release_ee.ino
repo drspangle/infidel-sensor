@@ -26,10 +26,14 @@
 //#define I2C_ADDR 44 //iterate for additional sensors in same I2C bus
 
 #define smooth 100.0 //intensity of digital lowpass filtering
+
 #define numtemps 6    //Tablecount 
 
 #define VERSION_I2C 11  //I2C Protokoll Version
 
+#define EE_CHKSUM_ADR  8
+
+//I2C Commands from Host
 #define I2C_CMD_VAL 0
 #define I2C_CMD_RAWVAL 2
 #define I2C_CMD_VER 121
@@ -39,6 +43,7 @@
 
 float dia = 1.7;
 unsigned int raw_ad_in = 0; //RAW ADC Value for IIC Transmit
+
 unsigned char I2C_akt_cmd = 0;
 
 //Variables for EEPROM handling
@@ -78,13 +83,12 @@ void setup() {
   delay(50);
 
   //Read Table from EEPROM
-  byte ee_check = EEPROM.read(8);
-  if(ee_check = 0x2d)
+  if(read_eeprom_chksum())
     read_eeprom_tab();
   else
     write_eeprom_tab();
 
-  //blink to indicate sensor powered and ready
+  //blink to indicate sensor read EEPROM
   digitalWrite(FAULT, HIGH);
   delay(50);
   digitalWrite(FAULT, LOW);
@@ -246,40 +250,58 @@ short convert2dia(short in) {
 void read_eeprom_tab(){
   byte *tab_ptr;
 
-  byte ee_check = 0;
+  ee_address = 10;
 
-  ee_check = EEPROM.read(8);
-
-  if(ee_check == 0x2d){
-    ee_address = 10;
-
-    tab_ptr = (byte*)&dia_table[0][0];
-    for(byte cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
-      ee_value = EEPROM.read(ee_address);
-      ee_address++;
-      *tab_ptr = ee_value;
-      tab_ptr++;
-    }
+  tab_ptr = (byte*)&dia_table[0][0];
+  for(byte cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
+    ee_value = EEPROM.read(ee_address);
+    ee_address++;
+    *tab_ptr = ee_value;
+    tab_ptr++;
   }
+}
+
+uint8_t  read_eeprom_chksum(){
+  uint8_t ee_chksum = 0;
+  uint8_t ee_check = 0;
+  
+  ee_check = EEPROM.read(EE_CHKSUM_ADR);
+  ee_address = 10;
+
+  for(byte cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
+    ee_value = EEPROM.read(ee_address);
+    ee_chksum ^= ee_value;
+    ee_address++;
+  }
+
+  if(ee_check == ee_chksum)
+    return(true);
+  else
+    return(false);
 }
 
 //write Values from Table to EEPROM (24 byte)
 void write_eeprom_tab(){
   byte *tab_ptr;
+  uint8_t ee_chksum = 0;
 
   ee_address = 10;
   
   tab_ptr = (byte*)&dia_table[0][0];
+  
   for(byte cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
-       ee_value = (*tab_ptr++);
-       EEPROM.write(ee_address, ee_value);
-       ee_address++;
-    }
-  EEPROM.write(8, 0x2d);      //Check Value
+    ee_value = (*tab_ptr++);
+    ee_chksum ^= ee_value;
+    EEPROM.write(ee_address, ee_value);
+    ee_address++;
+  }
+  
+  EEPROM.write(EE_CHKSUM_ADR, ee_chksum);      //Check XOR Value
 }
 
-
+//ToDo
 void calibrate(){
+  
  /*  TODO: Self-calibration
   *  Press button, insert 1mm brill bit shaft, press to confirm reading
   *  Repeat for 1.5mm, 1.7mm, 2mm
