@@ -54,11 +54,12 @@ Also required:
 - 1 SS495A linear hall effect sensor (or comparable)
 
 ### Fasteners
-- 2 M3x8 screws (eg ISO 4762 M2x8)
+- 2 M3x8 screws (eg ISO 4762 M3x8)
 - 1 3x24mm pin (eg DIN 7 3x24mm, for mating lever to the block)
 - 1 3x16mm pin (eg DIN 7 3x16mm, for roller bearing in lever)
 - 1 3x18mm pin (eg DIN 7 3x18mm, for idler bearing in block)
 - 6 M3 threaded inserts
+- 1 M5x5 or M5x8 grub screw (eg ISO 4026 M5x5, for pre loading spring) 
 
 Pins may be replaced with screws or grubscrews, which may result in decreased precision.
 
