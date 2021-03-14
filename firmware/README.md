@@ -29,8 +29,11 @@ Load the Code, wire the ISP Programm to the ISP Port on the Sensor and Programm 
 
 Set the Attiny85
 Tools --> Prozessor: Attiny85
+
 Tools --> Clock: Internal 1 Mhz
+
 Tools --> Burn Bootloader to set the Fuses
+
 
 Sketch --> Upload with Programmer
 
