@@ -26,10 +26,11 @@
 - ISP Programmer like Arduino over ISP --> https://www.arduino.cc/en/Tutorial/BuiltInExamples/ArduinoISP
  
 Load the Code, wire the ISP Programm to the ISP Port on the Sensor and Programm it
+
 Set the Attiny85
 Tools --> Prozessor: Attiny85
 Tools --> Clock: Internal 1 Mhz
-Tools --> Burn Bootloader to sett the Fuses
+Tools --> Burn Bootloader to set the Fuses
 
 Sketch --> Upload with Programmer
 
