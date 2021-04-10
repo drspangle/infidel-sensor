@@ -59,7 +59,7 @@ Table [ADC] [DIA in um]:
 03: 0816 / 1401
 04: 0999 / 1001
 05: 1022 / 0001
-Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val):
+Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table Val / 5 - Ongoing raw read):
 ```
 
 | Commands | Note |  Output |
@@ -69,8 +69,8 @@ Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel V
 | 2 | Read the Version | Version: 1.11 |
 | 3 | Read the Diameter Table | Table [idx] [ADC] [DIA in um] |
 | 4 | Set the Value in the Table | Input values for Table [IDX],[ADC],[DIA um] like (1,619,2090) |
-| 5 | Ongoing reading the ADC rae Value, stop when the command 5 is send one more time |
-| h | show the Commandlist |
+| 5 | Ongoing reading the ADC raw Value, stop when the command 5 is send one more time | 
+| h | Show the Commandlist |
 
 ## Calibration
 
@@ -87,7 +87,7 @@ Input:
 ```
 
 Input this String --> 1,503,2000
-Means, Tabel Index 1 (Comnand "3"), ADC Val 503, Diameter 3
+Means, Table Index 1 (Comnand "3"), ADC Val 503, Diameter 3
 
 Repeat this for the next two Diameter (1,7mm, 1,4 mm) and write the Values to the Sensor
 
