@@ -10,13 +10,14 @@
     Licensed CC-0 / Public Domain by Thomas Sanladerer
 
     EEPROM Update and Value Set over I2C by Michael Doppler (midopple)
+    Standalone Calibration from midopple
 */
 
 #include <TinyWireS.h>
 #include <EEPROM.h>
 
 //pins as named on PCB
-#define FAULT 4 //on-board LED and digital output pin
+#define FAULT_IO_LED 4 //on-board LED and digital output pin
 #define A_IN A3 //SS495 output and push-button input (for calibration procedure)
 #define A_OUT 1 //analog (filtered PWM) output, voltage proportional to filament diameter
 
@@ -30,27 +31,34 @@
 #define numtemps 6    //Tablecount 
 
 #define VERSION_I2C 11  //I2C Protokoll Version
+#define MAIN_VERSION 2
 
 #define EE_CHKSUM_ADR  8
 
 //I2C Commands from Host
 #define I2C_CMD_VAL 0
 #define I2C_CMD_RAWVAL 2
+#define I2C_CMD_MEANVAL 5
 #define I2C_CMD_VER 121
 #define I2C_CMD_TABLE 131
 #define I2C_CMD_SET_TAB 132
 
 
 float dia = 1.7;
-unsigned int raw_ad_in = 0; //RAW ADC Value for IIC Transmit
+uint16_t  raw_ad_in = 0; //RAW ADC Value for IIC Transmit
 
-unsigned char I2C_akt_cmd = 0;
+uint8_t  I2C_akt_cmd = 0;
+
+//Values for ADC Mean sampling 
+uint16_t ADC_mean_min = 0;
+uint16_t ADC_mean_max = 0;
+uint8_t ADC_mean_cnt = 0;
 
 //Variables for EEPROM handling
-int ee_address = 0;
-byte ee_value;
+uint16_t ee_address = 0;
+uint8_t  ee_value;
 
-short dia_table[numtemps][2] = {
+int16_t dia_table[numtemps][2] = {
   //{ADC reading in, diameter out [um]}
   //Init Values for the first start
   //After init Values are read from EEPROM
@@ -66,8 +74,9 @@ short dia_table[numtemps][2] = {
 
 
 void setup() {
+  
   //setup pins
-  pinMode(FAULT, OUTPUT);
+  pinMode(FAULT_IO_LED, OUTPUT);
   pinMode(A_IN, INPUT);
   pinMode(A_OUT, OUTPUT);
 
@@ -77,31 +86,36 @@ void setup() {
   TinyWireS.onReceive(receiveISR);
 
   //blink to indicate sensor powered and ready
-  digitalWrite(FAULT, HIGH);
-  delay(50);
-  digitalWrite(FAULT, LOW);
-  delay(50);
+  digitalWrite(FAULT_IO_LED, HIGH);
+  delay(400);
+  digitalWrite(FAULT_IO_LED, LOW);
+  delay(400);
 
-  //Read Table from EEPROM
+  //Check EEPROM Chksum and when OK read Table from EEPROM, 
+  //if CHKSUM is not OK write standard Values to EEPROM
   if(read_eeprom_chksum())
     read_eeprom_tab();
   else
     write_eeprom_tab();
 
   //blink to indicate sensor read EEPROM
-  digitalWrite(FAULT, HIGH);
-  delay(50);
-  digitalWrite(FAULT, LOW);
-  delay(50);
+  digitalWrite(FAULT_IO_LED, HIGH);
+  delay(400);
+  digitalWrite(FAULT_IO_LED, LOW);
+  delay(400);
+
+  //Check at startup if the Button is pressed to start Calibrazion
+  check_for_calibrate();
   
 }
 
 void loop() {
   
-  int aout_val;
+  //Varibale for Analog Out Calculation
+  int16_t aout_val;
   
   //get fresh reading
-  short in = analogRead(A_IN);
+  int16_t in = analogRead(A_IN);
   
 
   //Store ADC Value for IIC Transmit
@@ -111,18 +125,19 @@ void loop() {
   dia += (((float)convert2dia(in)/1000.0) - dia) / smooth;
 
   //Calculate Voltage for Analog Out --> Volate = Diameter --> 1,73 V = 1,73 mm
-  int help_dia_int = dia*1000;
-  aout_val = map(help_dia_int, 1420 , 2140, 0, 255);
+  int16_t help_dia_int = (int16_t)(dia*1000);
+  aout_val = map(help_dia_int, 1437, 2156, 0, 255);
+  aout_val = constrain(aout_val, 0, 255);
   
-  //Wreite Value to Analog Out
-  analogWrite(A_OUT, (unsigned byte)(aout_val));
+  //Write Value to Analog Out
+  analogWrite(A_OUT, (uint8_t)(aout_val));
 
-  //light LED and pull up FAULT if sensor saturated, button pressed or diameter low
+  //light LED and pull up FAULT_IO_LED if sensor saturated, button pressed or diameter low
   if (in < 3 or dia < 1.5) {
-    digitalWrite(FAULT, HIGH);
+    digitalWrite(FAULT_IO_LED, HIGH);
   }
   else {
-    digitalWrite(FAULT, LOW);
+    digitalWrite(FAULT_IO_LED, LOW);
   }
 }
 
@@ -132,9 +147,10 @@ void requestISR() {
   
   //sends smoothed diameter reading in um as two bytes via I2C
   //first byte is upper 8 bits, second byte lower 8 bits
-  long senddia = 1000 * dia;
-  byte b1,b2,b3,b4;
-  byte *tab_ptr;
+  int32_t senddia = 1000 * dia;
+  int16_t ADC_help_val;
+  uint8_t b1,b2,b3,b4,b5,b6;
+  uint8_t *tab_ptr;
 
   switch(I2C_akt_cmd){
     //Send diameter 2 byte
@@ -160,15 +176,33 @@ void requestISR() {
       TinyWireS.write(b3);
       TinyWireS.write(b4);
     break;
+    //Messure Meanvalue for Calibration
+    case I2C_CMD_MEANVAL:
+      ADC_help_val = sample_AD_cal_val(100);
+      b1 = floor(ADC_help_val / 256);
+      b2 = (ADC_help_val % 256);
+      b3 = floor(ADC_mean_min / 256);
+      b4 = (ADC_mean_min % 256);
+      b5 = floor(ADC_mean_max / 256);
+      b6 = (ADC_mean_max % 256);
+
+      TinyWireS.write(b1);
+      TinyWireS.write(b2);
+      TinyWireS.write(b3);
+      TinyWireS.write(b4);
+      TinyWireS.write(b5);
+      TinyWireS.write(b6);
+      TinyWireS.write(ADC_mean_cnt);
+   break;
     //Send version 2 byte
     case I2C_CMD_VER:
-      TinyWireS.write(1);
+      TinyWireS.write(MAIN_VERSION);
       TinyWireS.write(VERSION_I2C);
     break;
     // Send Table 24 byte
     case I2C_CMD_TABLE:
     tab_ptr = (byte*)&dia_table[0][0];
-    for(byte cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
+    for(uint8_t cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
        TinyWireS.write(*tab_ptr++);
     }
     break;
@@ -180,8 +214,8 @@ void receiveISR(uint8_t num_bytes) {
 
   while(TinyWireS.available())
   {
-    byte b1,b2,b3,b4;
-    byte i2c_read_cmd = TinyWireS.read();
+    uint8_t b1,b2,b3,b4;
+    uint8_t i2c_read_cmd = TinyWireS.read();
    
     switch(i2c_read_cmd){
       case I2C_CMD_VAL:
@@ -190,6 +224,10 @@ void receiveISR(uint8_t num_bytes) {
 
       case I2C_CMD_RAWVAL:
         I2C_akt_cmd = I2C_CMD_RAWVAL;
+      break;
+
+      case I2C_CMD_MEANVAL:
+        I2C_akt_cmd = I2C_CMD_MEANVAL;
       break;
 
       case I2C_CMD_VER:
@@ -201,15 +239,15 @@ void receiveISR(uint8_t num_bytes) {
       break;
 
       case I2C_CMD_SET_TAB:
-        byte idx = TinyWireS.read();
+        uint8_t idx = TinyWireS.read();
         b1 = TinyWireS.read();
         b2 = TinyWireS.read();
         b3 = TinyWireS.read();
         b4 = TinyWireS.read();
 
         if(idx >= 0 && idx < 6){
-          short adc_val_ee = (short)b1 * 256 + b2;
-          short dia_val_ee = (short)b3 * 256 + b4;
+          int16_t adc_val_ee = (int16_t)b1 * 256 + b2;
+          int16_t dia_val_ee = (int16_t)b3 * 256 + b4;
           dia_table[idx][0] = adc_val_ee;
           dia_table[idx][1] = dia_val_ee;
         }
@@ -221,14 +259,14 @@ void receiveISR(uint8_t num_bytes) {
   }
 }
 
-
-short convert2dia(short in) {
+//Convert AD Value to Diameter
+int16_t convert2dia(int16_t in) {
   
   //converts an ADC reading to diameter
   //Inspired by Sprinter / Marlin thermistor reading
  
   
-  byte i;
+  uint8_t i;
   
   for (i = 1; i < numtemps; i++)
   {
@@ -238,7 +276,7 @@ short convert2dia(short in) {
       float slope = ((float)dia_table[i][1] - dia_table[i - 1][1]) / ((float)dia_table[i][0] - dia_table[i - 1][0]);
       float indiff = ((float)in - dia_table[i - 1][0]);
       float outdiff = slope * indiff;
-      short out = (short)outdiff + dia_table[i - 1][1];
+      int16_t out = (int16_t)outdiff + dia_table[i - 1][1];
       return (out);
       break;
     }
@@ -248,12 +286,12 @@ short convert2dia(short in) {
 
 //read Values for Table from EEPROM (24 byte)
 void read_eeprom_tab(){
-  byte *tab_ptr;
+  uint8_t *tab_ptr;
 
   ee_address = 10;
 
-  tab_ptr = (byte*)&dia_table[0][0];
-  for(byte cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
+  tab_ptr = (uint8_t*)&dia_table[0][0];
+  for(uint8_t cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
     ee_value = EEPROM.read(ee_address);
     ee_address++;
     *tab_ptr = ee_value;
@@ -261,6 +299,7 @@ void read_eeprom_tab(){
   }
 }
 
+//Calculate Chksum from EEPROM
 uint8_t  read_eeprom_chksum(){
   uint8_t ee_chksum = 0;
   uint8_t ee_check = 0;
@@ -268,7 +307,7 @@ uint8_t  read_eeprom_chksum(){
   ee_check = EEPROM.read(EE_CHKSUM_ADR);
   ee_address = 10;
 
-  for(byte cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
+  for(uint8_t cnt_i=0;cnt_i < (numtemps*4);cnt_i++){
     ee_value = EEPROM.read(ee_address);
     ee_chksum ^= ee_value;
     ee_address++;
@@ -299,12 +338,219 @@ void write_eeprom_tab(){
   EEPROM.write(EE_CHKSUM_ADR, ee_chksum);      //Check XOR Value
 }
 
-//ToDo
+
+/********************************************************************
+* **** Function for Standalone Calibrating                    *******
+*********************************************************************/
+
+//Check at Startup for Calibrate-mode
+void check_for_calibrate(){
+  
+  //get fresh reading
+  int16_t in = 0;
+  in = analogRead(A_IN);
+
+  if(in < 5){   //Button pressed
+    //read 5 times more to filter
+    for(uint8_t cnt_i = 0;cnt_i < 5;cnt_i++){
+      in += analogRead(A_IN);
+      delay(50);
+    }
+
+    if(in < 10)
+      calibrate();
+  }
+
+}
+
+
+//Flash the Led with the given count
+void flash_led(uint8_t count){
+
+  for(uint8_t cnt_i = 0;cnt_i < count;cnt_i++){
+    digitalWrite(FAULT_IO_LED, HIGH);
+    delay(120);
+    digitalWrite(FAULT_IO_LED, LOW);
+    delay(120);
+  }
+}
+
+//Wait for press and relase the button
+void wait_for_button_press(){
+  int16_t in = 0;
+
+  in = analogRead(A_IN);
+  
+  while(in > 20){
+    in = analogRead(A_IN);
+    digitalWrite(FAULT_IO_LED, HIGH);delay(80);digitalWrite(FAULT_IO_LED, LOW);delay(80);
+ }
+ 
+ while(in < 20){
+   in = analogRead(A_IN);
+   delay(10);
+ }
+}
+
+//Sample AD Values with ppeak rejection for calibration
+// When OK return the Meanvalue / when not OK Return 0
+uint16_t sample_AD_cal_val(uint8_t count){
+  int16_t  in = 0;
+  uint32_t ADC_sum_samples = 0;
+  int16_t  return_ADC_val = 0;
+  int16_t  ADC_range_val_high = 0;
+  int16_t  ADC_range_val_low = 0;
+  uint8_t  sample_count = 0;
+
+  ADC_mean_min = 1024;
+  ADC_mean_max = 0;
+
+  //First 10 Sample to get Mean Value
+  for(uint8_t cnt_i = 0;cnt_i < 10;cnt_i++){
+    in += analogRead(A_IN);
+    delay(50);
+  }
+
+  //ADC Values should in the Range from +/- 10%, --> Check for Peaks
+  ADC_range_val_high = (in / 9);
+  ADC_range_val_low = (in / 11);
+
+  digitalWrite(FAULT_IO_LED, HIGH);
+
+  for(uint8_t cnt_i = 0;cnt_i < count;cnt_i++){
+    in = analogRead(A_IN);
+    //Filtert out Peak Values 
+    if(in < ADC_range_val_high && in > ADC_range_val_low){
+      sample_count++;
+      ADC_sum_samples += in;
+
+      if(in < ADC_mean_min) ADC_mean_min = in;
+      if(in > ADC_mean_max) ADC_mean_max = in;
+      
+      delay(50);
+    }
+  }
+
+  digitalWrite(FAULT_IO_LED, LOW);
+
+  if(sample_count > (count / 2)){
+    return_ADC_val = (int16_t)(ADC_sum_samples / sample_count);
+
+    ADC_mean_cnt = sample_count;
+    
+    return(return_ADC_val);
+  }
+  else{
+    return(0);
+  }
+  
+}
+
+/********************************************************************
+* **** Calibrate Sensor with Button / Standalone Calibration *******
+*********************************************************************/
+
+#define CAL_STATE_START         0
+#define CAL_STATE_DIA_1         1
+#define CAL_STATE_WAIT_DIA_1    2
+#define CAL_STATE_DIA_2         3
+#define CAL_STATE_WAIT_DIA_2    4
+#define CAL_STATE_DIA_3         5
+#define CAL_STATE_WAIT_DIA_3    6
+#define CAL_STATE_END           10
+
 void calibrate(){
   
- /*  TODO: Self-calibration
+ /*  Self-calibration
+  *  
   *  Press button, insert 1mm brill bit shaft, press to confirm reading
-  *  Repeat for 1.5mm, 1.7mm, 2mm
+  *  Repeat for 1.4mm, 1.7mm, 2mm
   *  (optional: use interpolated value based on point between 1.5 and 2mm if 1.7mm if read with implausible value
   */
+
+  uint8_t calibrate_state = CAL_STATE_START;
+  uint16_t cal_sample_AD_val = 0;
+  int16_t in = 0;
+
+  //LED flash 10 times to show that calibrate is start
+  flash_led(10);
+
+  while(calibrate_state < CAL_STATE_END){
+
+
+    //dia_table[numtemps][2] = {
+    switch(calibrate_state){
+      case CAL_STATE_START:
+        in = analogRead(A_IN);
+        if(in > 100)
+          calibrate_state = CAL_STATE_WAIT_DIA_1;
+      break;
+      case CAL_STATE_WAIT_DIA_1:
+        in = analogRead(A_IN);
+        flash_led(1);delay(500);
+        if(in < 20) calibrate_state = CAL_STATE_DIA_1;
+      break;
+      case CAL_STATE_DIA_1:
+        in = analogRead(A_IN);
+        while(in < 50){
+          in = analogRead(A_IN);
+        }
+        
+        //Sample Valuse für AD to DIA Table --> 100 Samples
+        cal_sample_AD_val = sample_AD_cal_val(100);
+
+        wait_for_button_press();
+        
+        //ADC Value for 1.4mm
+        if(cal_sample_AD_val > 0) dia_table[3][0] = cal_sample_AD_val;
+        calibrate_state = CAL_STATE_WAIT_DIA_2;
+      break;
+      case CAL_STATE_WAIT_DIA_2:
+        in = analogRead(A_IN);
+        flash_led(2);delay(500);
+        if(in < 20) calibrate_state = CAL_STATE_DIA_2;
+      break;
+      case CAL_STATE_DIA_2:
+        in = analogRead(A_IN);
+        while(in < 50){
+          in = analogRead(A_IN);
+        }
+        
+        //Sample Valuse für AD to DIA Table --> 100 Samples
+        cal_sample_AD_val = sample_AD_cal_val(100);
+
+        wait_for_button_press();
+        
+        //ADC Value for 1.7mm
+        if(cal_sample_AD_val > 0) dia_table[2][0] = cal_sample_AD_val;
+        calibrate_state = CAL_STATE_WAIT_DIA_3;
+      break;
+      case CAL_STATE_WAIT_DIA_3:
+        in = analogRead(A_IN);
+        flash_led(3);delay(500);
+        if(in < 20) calibrate_state = CAL_STATE_DIA_3;
+      break;
+      case CAL_STATE_DIA_3:
+        in = analogRead(A_IN);
+        while(in < 50){
+          in = analogRead(A_IN);
+        }
+        
+        //Sample Valuse für AD to DIA Table --> 100 Samples
+        cal_sample_AD_val = sample_AD_cal_val(100);
+
+        wait_for_button_press();
+        
+        //ADC Value for 2.0mm
+        if(cal_sample_AD_val > 0) dia_table[1][0] = cal_sample_AD_val;
+        write_eeprom_tab();
+        calibrate_state = CAL_STATE_END;
+      break;
+      default:
+      break;
+    }
+    delay(40);
+  }
+
+  
 }

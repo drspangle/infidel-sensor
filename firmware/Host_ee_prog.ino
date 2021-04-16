@@ -13,6 +13,9 @@
 
 #define numtemps 6
 
+//Start with sending the Diameter Val, use with Serial Plotter in Arduino
+//#define UART_OUT_SCOPE
+
 #define SERIAL_BUFFER_SIZE 32
 
 //I2C addresses for Infidel sensor
@@ -21,6 +24,7 @@
 
 #define I2C_CMD_VAL 0
 #define I2C_CMD_RAWVAL 2
+#define I2C_CMD_MEANVAL 5
 #define I2C_CMD_VER 121
 #define I2C_CMD_TABLE 131
 #define I2C_CMD_SET_TAB 132
@@ -35,18 +39,24 @@ void setup() {
   Wire.begin();        // join i2c bus (address optional for host)
   Serial.begin(19200);  // start serial for output
 
-  Serial.println(F("Infidel Sensor Programmer"));
+  #ifndef UART_OUT_SCOPE
+    Serial.println(F("Infidel Sensor Programmer"));
 
-  //Check if the Device at Adress is Online
-  check_I2C_adress();
+    //Check if the Device at Adress is Online
+    check_I2C_adress();
    
-  Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table Val / 5 - Ongoing raw read):"));
+    Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val / 5 - Ongoing raw read / 6 - sample Mean ADC Val ):"));
+  #endif
   
 }
 
 void loop() {
 
-  static uint8_t ongoing_read = 0;
+  #ifdef UART_OUT_SCOPE
+    static uint8_t ongoing_read = 1;
+  #else
+    static uint8_t ongoing_read = 0;
+  #endif
   static uint8_t ongoing_cnt = 0;
 
   if (Serial.available()) {
@@ -81,10 +91,13 @@ void loop() {
         else
           ongoing_read = 0;
       break;
+      case '6':
+        readInfidel_mean_val();
+      break;
       case 'h':
       case 'H':
         Serial.println(F("Commands:"));
-        Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table Val / 5 - Ongoing raw read):"));
+        Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val / 5 - Ongoing raw read / 6 - sample Mean ADC Val)"));
       break;
       case 10:
       break;
@@ -102,10 +115,16 @@ void loop() {
     else{
       ongoing_cnt = 0;
       readInfidel_raw();
-      Serial.print(F("Diameter [mm] / [ADC]: "));
-      Serial.print(infidelin, 3);
-      Serial.print(F(" / RAW: "));
-      Serial.println(infidelin_raw,0);
+      
+      #ifdef UART_OUT_SCOPE
+        Serial.println(infidelin*1000, 0);
+      #else
+        Serial.print(F("Diameter [mm] / [ADC]: "));
+        Serial.print(infidelin, 3);
+        Serial.print(F(" / RAW: "));
+        Serial.println(infidelin_raw,0);
+      #endif
+      
     }
   }
   
@@ -138,6 +157,47 @@ void readInfidel_raw() {
   infidelin_raw = (((short) b3) * 256 + b4);
 }
 
+//Sample 100 ADc Val and show min,max,mean,cnt
+void readInfidel_mean_val() {
+  
+  uint16_t minval = 0;
+  uint16_t maxval = 0;
+  uint16_t meanval = 0;
+  uint8_t cntval = 0;
+  
+  Wire.beginTransmission(INFIDELADD); // transmit to device #44 (0x2c)
+  Wire.write(I2C_CMD_MEANVAL);             // sends value byte  
+  Wire.endTransmission();     // stop transmitting
+  
+  Wire.requestFrom(INFIDELADD, 7);
+  byte b1 = Wire.read();  //Mean Val
+  byte b2 = Wire.read();  //Mean Val
+  byte b3 = Wire.read();  //Min Val
+  byte b4 = Wire.read();  //Min Val
+  byte b5 = Wire.read();  //Max Val
+  byte b6 = Wire.read();  //Max Val
+  byte b7 = Wire.read();  //CNT
+
+  
+  meanval = (((short) b1) * 256 + b2);
+  minval  = (((short) b3) * 256 + b4);
+  maxval  = (((short) b5) * 256 + b6);
+  cntval = b7;
+
+  Serial.print(F("ADC Mean: "));
+  Serial.print(meanval, DEC);
+  Serial.print(F(" / Min: "));
+  Serial.print(minval, DEC);
+  Serial.print(F(" / Max: "));
+  Serial.print(maxval, DEC);
+  Serial.print(F(" / Cnt: "));
+  Serial.println(cntval, DEC);
+
+  Wire.beginTransmission(INFIDELADD); // transmit to device #44 (0x2c)
+  Wire.write(I2C_CMD_VAL);             // sends value byte  
+  Wire.endTransmission();     // stop transmitting
+  
+}
 
 void read_version(){
   
