@@ -60,7 +60,7 @@ Table [ADC] [DIA in um]:
 03: 0816 / 1401
 04: 0999 / 1001
 05: 1022 / 0001
-Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table Val / 5 - Ongoing raw read):
+Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table Val / 5 - Ongoing raw read / 6 - sample Mean ADC Val ):
 ```
 
 | Commands | Note |  Output |
@@ -71,6 +71,7 @@ Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table V
 | 3 | Read the Diameter Table | Table [idx] [ADC] [DIA in um] |
 | 4 | Set the Value in the Table | Input values for Table [IDX],[ADC],[DIA um] like (1,619,2090) |
 | 5 | Ongoing reading the ADC raw Value, stop when the command 5 is sent one more time | 
+| 6 | Read Meanvalue from Sensor (100 Samples), Display Min / Max / Mean / cnt, used it for Calibration |
 | h | Show the command list |
 
 ## Calibration
