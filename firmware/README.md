@@ -109,6 +109,25 @@ The values are stored in the EEPROM and will load from the EEPROM at the next po
 
 If you program the sensor with a new firmware over the ISP the EEPROM will be erased and the sensor will start with default settings.
  
+## Calibration with Button (Standalone)
+
+Press the Button at Powerup for 3 sec, if the Calibrationmode start the LED flashes 10 times
+The sensor sends an analog signal to Pin 5 [OUT].
+
+* Step 1, Led Flash 1 Times
+	*   Insert Drill with 1,4mm
+	*   Wait a short Time, 1-2 sec
+	*   Press the Button for 1 sec
+	*   The Led light for 2 sec, the Sensor is getting 100 Samples from the ADC 
+	*   If the messure is Ok the Led flash fast
+	*   Remove the drill an press the Button
+*   Step 2 Led flashes 2 Times (1,7mm Drill)
+    *   Insert the Drill 1,7mm and repeat Step 1
+*   Step 3, Led flash 3 times (2mm Drill)
+	*   Insert the Drill with 2mm and repeat Step 1
+
+The Calibration is done
+
 ## Analog Output
  
 The sensor sends an analog signal to Pin 5 [OUT].
