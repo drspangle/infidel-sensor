@@ -11,45 +11,46 @@
 ## Files
 | File | Note |
 | ------ | ------ |
-| calibration.ino | First Testsoftware by Thomas Sanladerer, it send the ADC raw Value over I2C, add some Drill diameters to the Sensor and note the ADC Value, put the Values to the Code driver.ino and comile it new |
-| driver.ino | Code for the Sensor, it use a fix Table to convert the ADC to Diameter, send 2 byte over I2C no Analog out |
-| host-example.ino | Read over I2C the 2 byte of Diameter and Display it over the Uart, Test the Sensor |
-| Host_ee_prog.ino | Code for the Host Arduino, communicate with the Sensor in two way an have a simple Uart Console to to the calibration and Sensor testing |
-| Infidel_release_ee.ino | Firmware for the Sensor, Table in EE-Prom, Set Values over I2C |
+| calibration.ino | First test firmware by Thomas Sanladerer, it sends the ADC raw value over I2C, insert some drills of known diameters into the sensor and note the ADC value, then put the values into driver.ino and re compile |
+| driver.ino | Code for the sensor, it uses a hardcoded table to convert the ADC to Diameter, and sends 2 bytes over I2C -- no analog out |
+| host-example.ino | Reads  the 2 bytes of diameter over I2C, and displays it over the UART, used to test the sensor |
+| Host_ee_prog.ino | Code for the Host Arduino, uses bidirectional communication with the sensor and has a simple UART Console to do the calibration and sensor testing |
+| Infidel_release_ee.ino | Firmware for the sensor, table in EEPROM, sets values over I2C |
 
 ## Setup and Programming 
 
-### You need
+### Requirements
 - Arduino > V1.8.8
 - TinyWireS LIbary from https://github.com/nadavmatalon/TinyWireS
 - ATtiny85 Board for Arduino from https://github.com/damellis/attiny
 - ISP Programmer like Arduino over ISP --> https://www.arduino.cc/en/Tutorial/BuiltInExamples/ArduinoISP
  
-Load the Code, wire the ISP Programm to the ISP Port on the Sensor and Programm it
+Load the code, wire the ISP program to the ISP port on the sensor and program it.
 
-Set the Attiny85
-Tools --> Prozessor: Attiny85
+Remember to set the processor to Attiny85.
 
-Tools --> Clock: Internal 1 Mhz
+Tools --> Processor: Attiny85
 
-Tools --> Burn Bootloader to set the Fuses
+Tools --> Clock: Internal 1 MHz
+
+Tools --> Burn bootloader to set the fuses
 
 
 Sketch --> Upload with Programmer
 
-After Programming the Led flashes 2 times
+After programming, the LED should flash two times.
 
-## Wire to the Hostboard
+## Wiring to the Host Board
 
-![Alt text](host_to_sensor_arduino.PNG?raw=true "Wire Disgramm")
+![Alt text](host_to_sensor_arduino.PNG?raw=true "Wire Diagram")
 
-Connect the the Sensor to the Hostboard like Arduino Uno or Mega
+Connect the the sensor to the host board, such as an Arduino Uno or Mega.
 
-Programm the Host with Host_ee_prog.ino and start the Console with 19200 baud
+Program the Host with Host_ee_prog.ino and start the console with 19200 baudrate.
 
 ## Console
 
-At starting this Data are shown
+On start, the following is shown:
 ```sh
 Version: 1.11
 Table [ADC] [DIA in um]:
@@ -69,29 +70,29 @@ Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table V
 | 2 | Read the Version | Version: 1.11 |
 | 3 | Read the Diameter Table | Table [idx] [ADC] [DIA in um] |
 | 4 | Set the Value in the Table | Input values for Table [IDX],[ADC],[DIA um] like (1,619,2090) |
-| 5 | Ongoing reading the ADC raw Value, stop when the command 5 is send one more time | 
-| h | Show the Commandlist |
+| 5 | Ongoing reading the ADC raw Value, stop when the command 5 is sent one more time | 
+| h | Show the command list |
 
 ## Calibration
 
-Start with the bigger Drill like 2 mm, put it in the Sensor and read the raw ADC value with Command "2"
+Start with the bigger shaft of known diameter (e.g., 2 mm), insert it into the sensor and read the raw ADC value with command "2".
 ```sh
 Diameter [mm] / [ADC]: 2.12 / RAW: 503
 ```
-note the ADC Value and use the Command "4" 
-The Console show 
+Note the ADC value and use the command "4".
+The console should show:
 
 ```sh
 Input values for Table [IDX],[ADC],[DIA um] like (1,619,2090)
 Input: 
 ```
 
-Input this String --> 1,503,2000
-Means, Table Index 1 (Comnand "3"), ADC Val 503, Diameter 3
+Input this string: `1,503,2000`
+Means, Table Index 1 (Command "3"), ADC Val 503, Diameter 3
 
-Repeat this for the next two Diameter (1,7mm, 1,4 mm) and write the Values to the Sensor
+Repeat this for the next two Ddiameter (1,7mm, 1,4 mm) and write the values to the sensor.
 
-At the End check the Settings with Command 3
+At the end check the settings with Command "3".
 
 ```sh
 Table [ADC] [DIA in um]:
@@ -103,24 +104,22 @@ Table [ADC] [DIA in um]:
 05: 1022 / 0001
 ```
 
-The Values are stored in the Epromm and will load from the Epromm at the next Power up
+The values are stored in the EEPROM and will load from the EEPROM at the next power up.
 
- If you Programm the Sensor with a new Firmware over the ISP the EEPROM will delete 
- and the Sensor start with standard Settings
+If you program the sensor with a new firmware over the ISP the EEPROM will be erased and the sensor will start with default settings.
  
+## Analog Output
  
- ## Analog Output
- 
- The Sensor send an Analog Signal to Pin 5 [OUT]
- 
- The range go from 1,42 VDC to 2,14 VDC 
- The Voltage ist the Diameter, 1,73V means 1,73mm
- 
- 
- ## Fault Pin
- 
- The Fault Pin is high wehn the Diameter is bigger then 3mm and Smaler 1,5mm
- it show the the Sensor ist out of the working range.
+The sensor sends an analog signal to Pin 5 [OUT].
+
+The range goes from 1.42 VDC to 2.14 VDC .
+The voltage is the analog for the diameter: 1.73V is equal to 1.73mm diameter.
+
+
+## Fault Pin
+
+The fault pin is high when the diameter is bigger than 3mm and smaller than 1.5mm.
+This indicates that the sensor is outside of the normal working range.
  
  
  
