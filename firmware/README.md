@@ -52,15 +52,23 @@ Program the Host with Host_ee_prog.ino and start the console with 19200 baudrate
 
 On start, the following is shown:
 ```sh
-Version: 1.11
+Infidel Sensor Programmer
+Scanning...
+I2C device found at address 43 
+ 
+Version: 3.12
 Table [ADC] [DIA in um]:
-00: 0001 / 2999
-01: 0617 / 2092
-02: 0722 / 1711
-03: 0816 / 1401
-04: 0999 / 1001
-05: 1022 / 0001
-Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table Val / 5 - Ongoing raw read / 6 - sample Mean ADC Val ):
+00: 0000 / 3000
+01: 0619 / 2090
+02: 0702 / 1700
+03: 0817 / 1400
+04: 1000 / 1000
+05: 1023 / 0000
+Table [DAC min Uout in uV] [DAC max Uout in uV]:
+09: 1344 / 2017
+Command Input 0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val / 5 - Ongoing raw read / 6 - sample Mean ADC Val
+Command Input 7 - DAC 0 PWW / 8 - DAC 255 PWM
+
 ```
 
 | Commands | Note |  Output |
