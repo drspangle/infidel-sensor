@@ -209,6 +209,7 @@ void requestISR() {
       TinyWireS.write(MAIN_VERSION);
       TinyWireS.write(VERSION_I2C);
     break;
+    //Response that DAC Override is active
     case I2C_CMD_OVERRIDE_DAC:
        TinyWireS.write(DAC_override_active);
     break;
@@ -228,7 +229,9 @@ void requestISR() {
       TinyWireS.write(b2);
       TinyWireS.write(b3);
       TinyWireS.write(b4);
-    
+    break;
+    case I2C_CMD_SET_TAB:
+       TinyWireS.write(1);
     break;
   }
 }
@@ -283,6 +286,9 @@ void receiveISR(uint8_t num_bytes) {
 
       break;
       case I2C_CMD_SET_TAB:
+        
+        I2C_akt_cmd = I2C_CMD_SET_TAB;
+        
         uint8_t idx = TinyWireS.read();
         b1 = TinyWireS.read();
         b2 = TinyWireS.read();

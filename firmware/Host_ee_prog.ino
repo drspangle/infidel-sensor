@@ -363,7 +363,10 @@ void get_value_from_uart(){
       Wire.write(b4);             // sends value byte  
       Wire.endTransmission();     // stop transmitting
 
-      Serial.println(F("Set Value for Table"));
+      Wire.requestFrom(INFIDELADD, 1);
+      b1 = Wire.read();
+
+      Serial.print(F("Set Value for Table. Ack: "));Serial.println(b1,DEC);
     }
     else{
       Serial.println(F("Wrong Value for ADC or DIA"));
@@ -384,7 +387,10 @@ void get_value_from_uart(){
     Wire.write(b4);             // sends value byte  
     Wire.endTransmission();     // stop transmitting
 
-    Serial.println(F("Set Value for DAC Values"));
+    Wire.requestFrom(INFIDELADD, 1);
+    b1 = Wire.read();
+
+    Serial.print(F("Set Value for DAC Values. Ack: "));Serial.println(b1,DEC);
   }
   else{
     Serial.println(F("Wrong Value for IDX 0-5 or 9"));
