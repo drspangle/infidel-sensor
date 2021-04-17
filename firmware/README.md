@@ -142,15 +142,17 @@ The voltage is the analog for the diameter: 1.73V is equal to 1.73mm diameter.
 ## Calibrate the Analog Output
 
 Connect a Multimeter to GND and OUT.
+The Analog Output depend on the VCC Voltage, so make the Calibration when the Sensor is connected to the Printerboard
+and not to the unstable USB Port.
 
 * Set with the command "7" the PWM to LOW, meassure the Voltage on Analog OUT and note it (like 1,344 V)
 * Set with the command "8" the PWM to HIGH, meassure the Voltage on Analog OUT and note it (like 2,017 V)
 
 Set with the command "4" the table Value for Index 9 (Calibration Values for DAC)
-IDX 9 then LOW Volate and the HIGH Voltage --> like: 9,1344,2017
+IDX 9 then LOW Voltage and the HIGH Voltage --> like: 9,1344,2017
 
 Check the table with command "3".
-The Values are stored en the EEPROM for the next Start
+The Values are stored in the EEPROM for the next Start
 
 ## Fault Pin
 
