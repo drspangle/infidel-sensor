@@ -71,14 +71,18 @@ Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table V
 | 3 | Read the Diameter Table | Table [idx] [ADC] [DIA in um] |
 | 4 | Set the Value in the Table | Input values for Table [IDX],[ADC],[DIA um] like (1,619,2090) |
 | 5 | Ongoing reading the ADC raw Value, stop when the command 5 is sent one more time | 
-| 6 | Read Meanvalue from Sensor (100 Samples), Display Min / Max / Mean / cnt, used it for Calibration |
+| 6 | Read Meanvalue from Sensor (100 Samples), Display Min / Max / Mean / cnt, used it for Calibration | ADC Mean: 704 / Min: 688 / Max: 713 / Cnt: 100 |
+| 7 | Set DAC to PWM 0 --> for check Output Voltage at LOW |
+| 8 | Set DAC to PWM 255 --> for check Output Voltage at HIGH |
 | h | Show the command list |
 
 ## Calibration
 
-Start with the bigger shaft of known diameter (e.g., 2 mm), insert it into the sensor and read the raw ADC value with command "2".
+Start with the bigger shaft of known diameter (e.g., 2 mm), insert it into the sensor and read the raw ADC value with command "6".
+Command "6" determines the mean value over 100 measurements and removes the outliers
+
 ```sh
-Diameter [mm] / [ADC]: 2.12 / RAW: 503
+ADC Mean: 704 / Min: 688 / Max: 713 / Cnt: 100
 ```
 Note the ADC value and use the command "4".
 The console should show:
@@ -135,6 +139,18 @@ The sensor sends an analog signal to Pin 5 [OUT].
 The range goes from 1.42 VDC to 2.14 VDC .
 The voltage is the analog for the diameter: 1.73V is equal to 1.73mm diameter.
 
+## Calibrate the Analog Output
+
+Connect a Multimeter to GND and OUT.
+
+* Set with the command "7" the PWM to LOW, meassure the Voltage on Analog OUT and note it (like 1,344 V)
+* Set with the command "8" the PWM to HIGH, meassure the Voltage on Analog OUT and note it (like 2,017 V)
+
+Set with the command "4" the table Value for Index 9 (Calibration Values for DAC)
+IDX 9 then LOW Volate and the HIGH Voltage --> like: 9,1344,2017
+
+Check the table with command "3".
+The Values are stored en the EEPROM for the next Start
 
 ## Fault Pin
 
