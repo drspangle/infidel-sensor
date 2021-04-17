@@ -39,6 +39,7 @@
 #define I2C_CMD_VAL 0
 #define I2C_CMD_RAWVAL 2
 #define I2C_CMD_MEANVAL 5
+#define I2C_CMD_OVERRIDE_DAC 7
 #define I2C_CMD_VER 121
 #define I2C_CMD_TABLE 131
 #define I2C_CMD_SET_TAB 132
@@ -57,6 +58,10 @@ uint8_t ADC_mean_cnt = 0;
 //Variables for EEPROM handling
 uint16_t ee_address = 0;
 uint8_t  ee_value;
+
+//Variables for Testing an Calibration DAC Output
+uint8_t DAC_override_active = 0;
+uint8_t DAC_override_value = 0;
 
 int16_t dia_table[numtemps][2] = {
   //{ADC reading in, diameter out [um]}
@@ -130,7 +135,10 @@ void loop() {
   aout_val = constrain(aout_val, 0, 255);
   
   //Write Value to Analog Out
-  analogWrite(A_OUT, (uint8_t)(aout_val));
+  if(DAC_override_active)
+    analogWrite(A_OUT, (uint8_t)(DAC_override_value));
+  else
+    analogWrite(A_OUT, (uint8_t)(aout_val));
 
   //light LED and pull up FAULT_IO_LED if sensor saturated, button pressed or diameter low
   if (in < 3 or dia < 1.5) {
@@ -238,6 +246,18 @@ void receiveISR(uint8_t num_bytes) {
         I2C_akt_cmd = I2C_CMD_TABLE;
       break;
 
+      case I2C_CMD_OVERRIDE_DAC:
+        b1 = TinyWireS.read();
+        b2 = TinyWireS.read();
+
+        if(b1 > 0) 
+          DAC_override_active = 1;
+        else
+          DAC_override_active = 0;
+
+        DAC_override_value = b2;
+
+      break;
       case I2C_CMD_SET_TAB:
         uint8_t idx = TinyWireS.read();
         b1 = TinyWireS.read();
