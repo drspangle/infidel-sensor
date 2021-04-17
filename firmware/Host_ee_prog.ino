@@ -1,11 +1,11 @@
 /*  Firmware for the Host for the (SS495) hall-sensor based filament diameter sensor.
     Reads and send I2C and show Values, 
 
-    Built for Arduino Uno oder Mega
+    Built for Arduino Uno or Mega
 
     Licensed CC-0 / Public Domain 
 
-    by Michael Doppler (midopple)
+    Revised by Michael Doppler (midopple)    
 */
 
 
