@@ -1,0 +1,432 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Wire Wire Line
+	3900 3400 4800 3400
+Wire Wire Line
+	3000 3600 3900 3600
+Wire Wire Line
+	3900 3600 3900 3400
+Text Label 3200 3600 0    70   ~ 0
+FAULT
+Wire Wire Line
+	5300 6000 5100 6000
+Text Label 5100 6000 0    70   ~ 0
+FAULT
+Wire Wire Line
+	6400 6000 6200 6000
+Text Label 6200 6000 0    70   ~ 0
+FAULT
+Wire Wire Line
+	5900 4300 5800 4300
+Wire Wire Line
+	6000 4300 5800 4300
+Wire Wire Line
+	5800 4300 5600 4300
+Text Label 5900 4300 0    70   ~ 0
+OUT
+Connection ~ 5800 4300
+Wire Wire Line
+	5300 5900 5100 5900
+Text Label 5100 5900 0    70   ~ 0
+OUT
+Wire Wire Line
+	6400 5900 6200 5900
+Text Label 6200 5900 0    70   ~ 0
+OUT
+Wire Wire Line
+	7200 3900 7200 4100
+Wire Wire Line
+	4600 3900 5800 3900
+Wire Wire Line
+	5800 3900 7200 3900
+Text Label 4800 3900 0    70   ~ 0
++5V
+Connection ~ 5800 3900
+Wire Wire Line
+	4400 5400 4800 5400
+Wire Wire Line
+	4800 5400 4800 5500
+Wire Wire Line
+	4800 5500 5300 5500
+Connection ~ 4400 5400
+Text Label 4400 5400 0    10   ~ 0
++5V
+Wire Wire Line
+	6200 5500 6400 5500
+Text Label 6200 5500 0    70   ~ 0
++5V
+Wire Wire Line
+	3400 5500 3600 5500
+Text Label 3600 5500 0    70   ~ 0
++5V
+Wire Wire Line
+	1600 3900 1300 3900
+Text Label 1300 3900 0    70   ~ 0
++5V
+Wire Wire Line
+	7200 4300 7200 4600
+Wire Wire Line
+	7200 4600 6500 4600
+Wire Wire Line
+	6500 4600 5800 4600
+Wire Wire Line
+	5800 4600 4600 4600
+Wire Wire Line
+	4600 4600 1300 4600
+Wire Wire Line
+	8200 4600 7200 4600
+Wire Wire Line
+	8100 4200 8200 4200
+Wire Wire Line
+	8200 4200 8200 4600
+Wire Wire Line
+	6400 4300 6500 4300
+Wire Wire Line
+	6500 4300 6500 4600
+Wire Wire Line
+	1300 4600 1300 4000
+Wire Wire Line
+	1300 4000 1600 4000
+Connection ~ 7200 4600
+Connection ~ 6500 4600
+Connection ~ 4600 4600
+Text Label 1300 4000 0    70   ~ 0
+GND
+Connection ~ 5800 4600
+Wire Wire Line
+	4400 5700 4800 5700
+Wire Wire Line
+	4800 5700 4800 5600
+Wire Wire Line
+	4800 5600 5300 5600
+Connection ~ 4400 5700
+Text Label 4400 5700 0    10   ~ 0
+GND
+Wire Wire Line
+	6200 5600 6400 5600
+Text Label 6200 5600 0    70   ~ 0
+GND
+Wire Wire Line
+	3400 5700 3600 5700
+Text Label 3600 5700 0    70   ~ 0
+GND
+Wire Wire Line
+	7400 5400 7300 5400
+Wire Wire Line
+	7300 5400 7300 5700
+Wire Wire Line
+	7300 5700 7400 5700
+Text Label 7300 5400 0    70   ~ 0
+GND
+Wire Wire Line
+	5600 3400 5700 3400
+Text Label 5600 3400 0    10   ~ 0
+GND
+Wire Wire Line
+	3000 4000 3200 4000
+Text Label 3200 4000 0    70   ~ 0
+SDA
+Wire Wire Line
+	3400 5600 3600 5600
+Text Label 3600 5600 0    70   ~ 0
+SDA
+Wire Wire Line
+	5300 5800 5100 5800
+Text Label 5100 5800 0    70   ~ 0
+SDA
+Wire Wire Line
+	6400 5800 6200 5800
+Text Label 6200 5800 0    70   ~ 0
+SDA
+Wire Wire Line
+	3000 3800 3200 3800
+Text Label 3200 3800 0    70   ~ 0
+SCK
+Wire Wire Line
+	2800 5600 2600 5600
+Text Label 2600 5600 0    70   ~ 0
+SCK
+Wire Wire Line
+	5300 5700 5100 5700
+Text Label 5100 5700 0    70   ~ 0
+SCK
+Wire Wire Line
+	6400 5700 6200 5700
+Text Label 6200 5700 0    70   ~ 0
+SCK
+Wire Wire Line
+	7600 4200 7700 4200
+Wire Wire Line
+	7600 4200 7600 3700
+Wire Wire Line
+	7600 3700 3000 3700
+Text Label 3200 3700 0    70   ~ 0
+IN
+Connection ~ 7600 4200
+Wire Wire Line
+	3000 3500 3200 3500
+Text Label 3200 3500 0    70   ~ 0
+RESET
+Wire Wire Line
+	2800 5700 2600 5700
+Text Label 2600 5700 0    70   ~ 0
+RESET
+Wire Wire Line
+	2800 5500 2600 5500
+Text Label 2600 5500 0    70   ~ 0
+MISO
+Wire Wire Line
+	3900 4300 5200 4300
+Wire Wire Line
+	3000 3900 3900 3900
+Wire Wire Line
+	3900 3900 3900 4300
+Text Label 3200 3900 0    70   ~ 0
+MISO
+Wire Wire Line
+	5100 3400 5200 3400
+$Comp
+L filaSens-eagle-import:PINHD-1X6 JP1
+U 1 1 235567EB
+P 5400 5800
+F 0 "JP1" H 5150 6225 59  0000 L BNN
+F 1 "OUTPUT" H 5150 5400 59  0000 L BNN
+F 2 "filaSens:1X06" H 5400 5800 50  0001 C CNN
+F 3 "" H 5400 5800 50  0001 C CNN
+	1    5400 5800
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:A13?UA IC2
+U 1 1 B2BFE474
+P 6900 4200
+F 0 "IC2" H 6700 4450 59  0000 L BNN
+F 1 "SS495" H 6700 3900 59  0000 L BNN
+F 2 "filaSens:SIP3-UA" H 6900 4200 50  0001 C CNN
+F 3 "" H 6900 4200 50  0001 C CNN
+	1    6900 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:+5V #P+01
+U 1 1 6A081B6E
+P 4600 3800
+F 0 "#P+01" H 4600 3800 50  0001 C CNN
+F 1 "+5V" V 4500 3600 59  0000 L BNN
+F 2 "" H 4600 3800 50  0001 C CNN
+F 3 "" H 4600 3800 50  0001 C CNN
+	1    4600 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:+5V #P+02
+U 1 1 637B3A6A
+P 4400 5300
+F 0 "#P+02" H 4400 5300 50  0001 C CNN
+F 1 "+5V" V 4300 5100 59  0000 L BNN
+F 2 "" H 4400 5300 50  0001 C CNN
+F 3 "" H 4400 5300 50  0001 C CNN
+	1    4400 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:GND #GND01
+U 1 1 8DA2BB24
+P 4600 4700
+F 0 "#GND01" H 4600 4700 50  0001 C CNN
+F 1 "GND" H 4500 4600 59  0000 L BNN
+F 2 "" H 4600 4700 50  0001 C CNN
+F 3 "" H 4600 4700 50  0001 C CNN
+	1    4600 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:GND #GND02
+U 1 1 4877C9E2
+P 4400 5800
+F 0 "#GND02" H 4400 5800 50  0001 C CNN
+F 1 "GND" H 4300 5700 59  0000 L BNN
+F 2 "" H 4400 5800 50  0001 C CNN
+F 3 "" H 4400 5800 50  0001 C CNN
+	1    4400 5800
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:PINHD-1X6 JP2
+U 1 1 46E31EBA
+P 6500 5800
+F 0 "JP2" H 6250 6225 59  0000 L BNN
+F 1 "SUPPORT_ROW" H 6250 5400 59  0000 L BNN
+F 2 "filaSens:1X06" H 6500 5800 50  0001 C CNN
+F 3 "" H 6500 5800 50  0001 C CNN
+	1    6500 5800
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:MOUNT-PAD-ROUND3.0 H1
+U 1 1 9910BFD8
+P 7500 5400
+F 0 "H1" H 7610 5423 59  0000 L BNN
+F 1 "MOUNT-PAD-ROUND3.0" H 7610 5303 59  0000 L BNN
+F 2 "filaSens:3,0-PAD" H 7500 5400 50  0001 C CNN
+F 3 "" H 7500 5400 50  0001 C CNN
+	1    7500 5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:MOUNT-PAD-ROUND3.0 H2
+U 1 1 5D268E00
+P 7500 5700
+F 0 "H2" H 7610 5723 59  0000 L BNN
+F 1 "MOUNT-PAD-ROUND3.0" H 7610 5603 59  0000 L BNN
+F 2 "filaSens:3,0-PAD" H 7500 5700 50  0001 C CNN
+F 3 "" H 7500 5700 50  0001 C CNN
+	1    7500 5700
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:MA03-2 SV1
+U 1 1 C9A7A6AE
+P 3100 5600
+F 0 "SV1" H 2950 5830 59  0000 L BNN
+F 1 "ISP" H 2950 5300 59  0000 L BNN
+F 2 "filaSens:MA03-2" H 3100 5600 50  0001 C CNN
+F 3 "" H 3100 5600 50  0001 C CNN
+	1    3100 5600
+	-1   0    0    1   
+$EndComp
+$Comp
+L filaSens-eagle-import:TINY10S IC3
+U 1 1 40F764B3
+P 2300 3800
+F 0 "IC3" H 1800 4230 59  0000 L BNN
+F 1 "TINY85" H 1800 3400 59  0000 L BNN
+F 2 "filaSens:SOIC8" H 2300 3800 50  0001 C CNN
+F 3 "" H 2300 3800 50  0001 C CNN
+	1    2300 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:R-EU_R0402 R2
+U 1 1 C0D1C9B9
+P 5400 4300
+F 0 "R2" H 5250 4359 59  0000 L BNN
+F 1 "36k" H 5250 4170 59  0000 L BNN
+F 2 "filaSens:R0402" H 5400 4300 50  0001 C CNN
+F 3 "" H 5400 4300 50  0001 C CNN
+	1    5400 4300
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:R-EU_R0402 R1
+U 1 1 DDF01354
+P 5400 3400
+F 0 "R1" H 5250 3459 59  0000 L BNN
+F 1 "1k" H 5250 3270 59  0000 L BNN
+F 2 "filaSens:R0402" H 5400 3400 50  0001 C CNN
+F 3 "" H 5400 3400 50  0001 C CNN
+	1    5400 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:R-EU_R0402 R4
+U 1 1 9335F57E
+P 5800 4100
+F 0 "R4" H 5650 4159 59  0000 L BNN
+F 1 "18k" H 5650 3970 59  0000 L BNN
+F 2 "filaSens:R0402" H 5800 4100 50  0001 C CNN
+F 3 "" H 5800 4100 50  0001 C CNN
+	1    5800 4100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L filaSens-eagle-import:R-EU_R0402 R3
+U 1 1 B3FB3AD2
+P 6200 4300
+F 0 "R3" H 6050 4359 59  0000 L BNN
+F 1 "9k1" H 6050 4170 59  0000 L BNN
+F 2 "filaSens:R0402" H 6200 4300 50  0001 C CNN
+F 3 "" H 6200 4300 50  0001 C CNN
+	1    6200 4300
+	-1   0    0    1   
+$EndComp
+$Comp
+L filaSens-eagle-import:R-EU_R0402 R5
+U 1 1 47D19289
+P 7400 4200
+F 0 "R5" H 7250 4259 59  0000 L BNN
+F 1 "4k7" H 7250 4070 59  0000 L BNN
+F 2 "filaSens:R0402" H 7400 4200 50  0001 C CNN
+F 3 "" H 7400 4200 50  0001 C CNN
+	1    7400 4200
+	-1   0    0    1   
+$EndComp
+$Comp
+L filaSens-eagle-import:C-EUC0402 C1
+U 1 1 E7D47EA7
+P 5800 4400
+F 0 "C1" H 5860 4415 59  0000 L BNN
+F 1 "10uF" H 5860 4215 59  0000 L BNN
+F 2 "filaSens:C0402" H 5800 4400 50  0001 C CNN
+F 3 "" H 5800 4400 50  0001 C CNN
+	1    5800 4400
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:C-EUC0402 C2
+U 1 1 8350CC17
+P 4400 5500
+F 0 "C2" H 4460 5515 59  0000 L BNN
+F 1 "10uF" H 4460 5315 59  0000 L BNN
+F 2 "filaSens:C0402" H 4400 5500 50  0001 C CNN
+F 3 "" H 4400 5500 50  0001 C CNN
+	1    4400 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:MOMENTARY-SWITCH-SPST-SMD-6.2MM-TALL S1
+U 1 1 788C9994
+P 7900 4200
+F 0 "S1" H 7900 4260 70  0000 C BNN
+F 1 "MOMENTARY-SWITCH-SPST-SMD-6.2MM-TALL" H 9000 4480 70  0000 C TNN
+F 2 "filaSens:TACTILE_SWITCH_SMD_6.2MM_TALL" H 7900 4200 50  0001 C CNN
+F 3 "" H 7900 4200 50  0001 C CNN
+	1    7900 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L filaSens-eagle-import:CHIP-FLAT-Y_0603-0.35MM LED1
+U 1 1 7DC8C285
+P 4900 3400
+F 0 "LED1" H 5000 3370 59  0000 L BNN
+F 1 "CHIP-FLAT-Y_0603-0.35MM" H 5000 3270 59  0000 L BNN
+F 2 "filaSens:LEDC1608X35N_FLAT-Y" H 4900 3400 50  0001 C CNN
+F 3 "" H 4900 3400 50  0001 C CNN
+	1    4900 3400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L filaSens-eagle-import:GND #GND03
+U 1 1 21137572
+P 5700 3500
+F 0 "#GND03" H 5700 3500 50  0001 C CNN
+F 1 "GND" H 5600 3400 59  0000 L BNN
+F 2 "" H 5700 3500 50  0001 C CNN
+F 3 "" H 5700 3500 50  0001 C CNN
+	1    5700 3500
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
