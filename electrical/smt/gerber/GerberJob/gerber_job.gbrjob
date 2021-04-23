@@ -1,7 +1,7 @@
 {
     "Header": {
         "Comment": "All values are metric (mm)",
-        "CreationDate": "2021-02-18T11:27:45Z",
+        "CreationDate": "2021-04-23T17:41:42Z",
         "GenerationSoftware": {
             "Application": "EAGLE",
             "Vendor": "Autodesk",
@@ -10,12 +10,12 @@
         "Part": "Single"
     },
     "Overall": {
-        "BoardThickness": 1.57,
+        "BoardThickness": 1.67,
         "LayerNumber": 2,
         "Name": {
             "ProjectId": "filaSens"
         },
-        "Owner": "Thomas Sanladerer <tom@toms3d.org>",
+        "Owner": "Scott Smith <scottsm@mac.com>",
         "Size": {
             "X": 50,
             "Y": 20
