@@ -5,13 +5,16 @@
 
     Licensed CC-0 / Public Domain 
 
-    Revised by Michael Doppler (midopple)
+    Revised by Michael Doppler (midopple)    
 */
 
 
 #include <Wire.h>
 
 #define numtemps 6
+
+//Start with sening the Diameter Val, use with Serial Plotter in Arduino
+//#define UART_OUT_SCOPE
 
 #define SERIAL_BUFFER_SIZE 32
 
@@ -21,6 +24,8 @@
 
 #define I2C_CMD_VAL 0
 #define I2C_CMD_RAWVAL 2
+#define I2C_CMD_MEANVAL 5
+#define I2C_CMD_OVERRIDE_DAC 7
 #define I2C_CMD_VER 121
 #define I2C_CMD_TABLE 131
 #define I2C_CMD_SET_TAB 132
@@ -30,23 +35,35 @@ float infidelin_raw = 0;
 
 short dia_table[numtemps][2];
 
+uint16_t DAC_min_out_voltage = 0;
+uint16_t DAC_max_out_voltage = 0;
+
+
 void setup() {
 
   Wire.begin();        // join i2c bus (address optional for host)
   Serial.begin(19200);  // start serial for output
 
-  Serial.println(F("Infidel Sensor Programmer"));
+  #ifndef UART_OUT_SCOPE
+    Serial.println(F("Infidel Sensor Programmer"));
 
-  //Check if the Device at Adress is Online
-  check_I2C_adress();
-   
-  Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table Val / 5 - Ongoing raw read):"));
+    //Check if the Device at Adress is Online
+    check_I2C_adress();
+
+    Serial.println(F("Command Input 0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val / 5 - Ongoing raw read / 6 - sample Mean ADC Val"));
+    Serial.println(F("Command Input 7 - DAC 0 PWW / 8 - DAC 255 PWM"));
+
+  #endif
   
 }
 
 void loop() {
 
-  static uint8_t ongoing_read = 0;
+  #ifdef UART_OUT_SCOPE
+    static uint8_t ongoing_read = 1;
+  #else
+    static uint8_t ongoing_read = 0;
+  #endif
   static uint8_t ongoing_cnt = 0;
 
   if (Serial.available()) {
@@ -81,10 +98,22 @@ void loop() {
         else
           ongoing_read = 0;
       break;
+      case '6':
+        readInfidel_mean_val();
+      break;
+      case '7':
+        //Override DAC with PWM 0 for Calibration
+        override_DAC_pwm(0);
+      break;
+      case '8':
+        //Override DAC with PWM 255 for Calibration
+        override_DAC_pwm(255);
+      break;
       case 'h':
       case 'H':
         Serial.println(F("Commands:"));
-        Serial.println(F("Command Input (0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Table Val / 5 - Ongoing raw read):"));
+        Serial.println(F("Command Input 0 - val / 1 - RAW val / 2 - Version / 3 - Table / 4 - Set Tabel Val / 5 - Ongoing raw read / 6 - sample Mean ADC Val"));
+        Serial.println(F("Command Input 7 - DAC 0 PWW / 8 - DAC 255 PWM"));
       break;
       case 10:
       break;
@@ -102,10 +131,16 @@ void loop() {
     else{
       ongoing_cnt = 0;
       readInfidel_raw();
-      Serial.print(F("Diameter [mm] / [ADC]: "));
-      Serial.print(infidelin, 3);
-      Serial.print(F(" / RAW: "));
-      Serial.println(infidelin_raw,0);
+      
+      #ifdef UART_OUT_SCOPE
+        Serial.println(infidelin*1000, 0);
+      #else
+        Serial.print(F("Diameter [mm] / [ADC]: "));
+        Serial.print(infidelin, 3);
+        Serial.print(F(" / RAW: "));
+        Serial.println(infidelin_raw,0);
+      #endif
+      
     }
   }
   
@@ -138,6 +173,47 @@ void readInfidel_raw() {
   infidelin_raw = (((short) b3) * 256 + b4);
 }
 
+//Sample 100 ADc Val and show min,max,mean,cnt
+void readInfidel_mean_val() {
+  
+  uint16_t minval = 0;
+  uint16_t maxval = 0;
+  uint16_t meanval = 0;
+  uint8_t cntval = 0;
+  
+  Wire.beginTransmission(INFIDELADD); // transmit to device #44 (0x2c)
+  Wire.write(I2C_CMD_MEANVAL);             // sends value byte  
+  Wire.endTransmission();     // stop transmitting
+  
+  Wire.requestFrom(INFIDELADD, 7);
+  byte b1 = Wire.read();  //Mean Val
+  byte b2 = Wire.read();  //Mean Val
+  byte b3 = Wire.read();  //Min Val
+  byte b4 = Wire.read();  //Min Val
+  byte b5 = Wire.read();  //Max Val
+  byte b6 = Wire.read();  //Max Val
+  byte b7 = Wire.read();  //CNT
+
+  
+  meanval = (((short) b1) * 256 + b2);
+  minval  = (((short) b3) * 256 + b4);
+  maxval  = (((short) b5) * 256 + b6);
+  cntval = b7;
+
+  Serial.print(F("ADC Mean: "));
+  Serial.print(meanval, DEC);
+  Serial.print(F(" / Min: "));
+  Serial.print(minval, DEC);
+  Serial.print(F(" / Max: "));
+  Serial.print(maxval, DEC);
+  Serial.print(F(" / Cnt: "));
+  Serial.println(cntval, DEC);
+
+  Wire.beginTransmission(INFIDELADD); // transmit to device #44 (0x2c)
+  Wire.write(I2C_CMD_VAL);             // sends value byte  
+  Wire.endTransmission();     // stop transmitting
+  
+}
 
 void read_version(){
   
@@ -173,7 +249,7 @@ void read_table(){
 
   delay(10);
   
-  Wire.requestFrom(INFIDELADD, 24);
+  Wire.requestFrom(INFIDELADD, 28);
 
   tab_ptr = (byte*)&dia_table[0][0];
   
@@ -182,6 +258,15 @@ void read_table(){
     *tab_ptr = b1;
     tab_ptr++;
   }
+
+  byte b1 = Wire.read();
+  byte b2 = Wire.read();  
+  byte b3 = Wire.read();
+  byte b4 = Wire.read();
+  
+  DAC_min_out_voltage = (uint16_t)b1 * 256 + b2;
+  DAC_max_out_voltage = (uint16_t)b3 * 256 + b4;
+
   
   Wire.beginTransmission(INFIDELADD); // transmit to device #44 (0x2c)
   Wire.write(I2C_CMD_VAL);             // sends value byte  
@@ -192,19 +277,42 @@ void read_table(){
 
 void print_table(){
 
+  char s[20];
+  
   Serial.println(F("Table [ADC] [DIA in um]:"));
   for(byte cnt_t=0;cnt_t < numtemps;cnt_t++){
-    
-    char s[20];
     sprintf(s,"%02u: %04u / %04u",cnt_t, dia_table[cnt_t][0], dia_table[cnt_t][1]); 
     Serial.println(s); 
   }
+
+  Serial.println(F("Table [DAC min Uout in uV] [DAC max Uout in uV]:"));
+  sprintf(s,"%02u: %04u / %04u",9, DAC_min_out_voltage, DAC_max_out_voltage); 
+  Serial.println(s);
+  
+}
+
+void override_DAC_pwm(uint8_t pwm_value){
+  
+  Wire.beginTransmission(INFIDELADD);  // transmit to device #44 (0x2c)
+  Wire.write(I2C_CMD_OVERRIDE_DAC);    // sends value byte  
+  Wire.write(10);                       // override is active
+  Wire.write(pwm_value);               // PWM Value
+  Wire.endTransmission();              // stop transmitting
+
+  Wire.requestFrom(INFIDELADD, 1);
+  byte b1 = Wire.read();
+
+  Serial.print(F("SET DAC to: "));Serial.print(pwm_value,DEC);Serial.print(F(" active: "));Serial.println(b1,DEC);
+
+  
+  
 }
 
 
 void get_value_from_uart(){
 
-  Serial.println(F("Input values for Table [IDX],[ADC],[DIA um] like (1,619,2090)"));
+  Serial.println(F("Input values for Table   [IDX],[ADC],[DIA um] like (1,619,2090)"));
+  Serial.println(F("Input values for DAC [IDX = 9],[DAC pwm 0],[DAC pwm 255] like (9,1437,2156)"));
   Serial.print(F("Input: "));
 
   byte uart_in = 0;
@@ -255,14 +363,37 @@ void get_value_from_uart(){
       Wire.write(b4);             // sends value byte  
       Wire.endTransmission();     // stop transmitting
 
-      Serial.println(F("Set Value for Table"));
+      Wire.requestFrom(INFIDELADD, 1);
+      b1 = Wire.read();
+
+      Serial.print(F("Set Value for Table. Ack: "));Serial.println(b1,DEC);
     }
     else{
       Serial.println(F("Wrong Value for ADC or DIA"));
     }
   }
+  else if(idx == 9){ //Send Values for DAC 
+    b1 = floor(ADC_val / 256);
+    b2 = (ADC_val % 256);
+    b3 = floor(dia_val / 256);
+    b4 = (dia_val % 256);
+    
+    Wire.beginTransmission(INFIDELADD); // transmit to device #44 (0x2c)
+    Wire.write(I2C_CMD_SET_TAB);             // sends value byte  
+    Wire.write(idx);             // sends value byte  
+    Wire.write(b1);             // sends value byte  
+    Wire.write(b2);             // sends value byte  
+    Wire.write(b3);             // sends value byte  
+    Wire.write(b4);             // sends value byte  
+    Wire.endTransmission();     // stop transmitting
+
+    Wire.requestFrom(INFIDELADD, 1);
+    b1 = Wire.read();
+
+    Serial.print(F("Set Value for DAC Values. Ack: "));Serial.println(b1,DEC);
+  }
   else{
-    Serial.println(F("Wrong Value for IDX 0-5"));
+    Serial.println(F("Wrong Value for IDX 0-5 or 9"));
   }
   
 }
