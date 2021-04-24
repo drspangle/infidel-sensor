@@ -42,7 +42,8 @@ Analog output is currently not enabled in driver.ino (I2C and FAULT pin only)
 Parts should preferably be printed in PETG, ABS or ASA as PLA may creep significantly over time.
 
 ### Electronics
-There are two board variants included in this repository, either can be used to assemble the InFiDEL.
+There are two board variants included in this repository, either can be used to assemble the InFiDEL. 
+PCBs and electronic components can be easily ordered via the [Kitspace project page](https://kitspace.org/boards/github.com/drspangle/infidel-sensor/) as it can auto-fill carts and get pricing on PCBs and electronic components from common suppliers.
 
 Choose one:
 - SMT control board (which is populated; Gerber files and component specifications are included) 
