@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to InFiDEL’s documentation! &#8212; InFiDEL v0.1.0 documentation</title>
+    <title>Assembly and setup &#8212; InFiDEL v0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="Bill of materials" href="bom.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -32,28 +32,25 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-infidel-s-documentation">
-<h1>Welcome to InFiDEL’s documentation!<a class="headerlink" href="#welcome-to-infidel-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p><em>A cheap, yet precise filament diameter sensor, intended to compensate for filament diameter deviations in real-time.</em></p>
-<p>The InFiDEL is a cheap (&lt; $5) filament diameter sensor intended for use with FDM 3d printers.
-The sensor can be calibrated to provide surprisingly precise filament diameter readings in real-time.
-The main idea is to use the sensor to correct for filament diameter deviations while printing.</p>
-<p>Based on this proof-of-concept: <a class="reference external" href="https://www.youmagine.com/designs/filament-diameter-sensor">https://www.youmagine.com/designs/filament-diameter-sensor</a></p>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
+  <div class="section" id="assembly-and-setup">
+<h1>Assembly and setup<a class="headerlink" href="#assembly-and-setup" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://www.youtube.com/watch?v=RYgdLPe_T0c"><img alt="Assembly and Setup Instructions on Youtube" src="https://img.youtube.com/vi/RYgdLPe_T0c/0.jpg" /></a></p>
+<div class="section" id="calibration">
+<h2>Calibration<a class="headerlink" href="#calibration" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bom.html">Bill of materials</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bom.html#printed-parts">Printed parts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bom.html#electronics">Electronics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bom.html#fasteners">Fasteners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bom.html#other-hardware">Other hardware</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bom.html#calibration-accessories">Calibration accessories</a></li>
+<li><p>Flash board with calibration.ino</p></li>
+<li><p>Connect a host via I2C (see provided host-example.ino)</p></li>
+<li><p>Insert each calibration drill bit shafts and replace the lookup table entries in driver.ino with your own measurements</p>
+<ul class="simple">
+<li><p>Measure the actual diameter of the shafts and fill second column</p></li>
+<li><p>Use the host’s output multiplied by 1000 to fill first column</p></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="assembly_and_setup.html">Assembly and setup</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="assembly_and_setup.html#calibration">Calibration</a></li>
-</ul>
+<li><p>Finally, flash driver.ino with your values filled out</p></li>
+<li><p>Hub should now output exact diameter values</p>
+<blockquote>
+<div><p>Note: Analog output is currently not enabled in driver.ino (I2C and FAULT pin only)</p>
+</div></blockquote>
 </li>
 </ul>
 </div>
@@ -66,7 +63,7 @@ The main idea is to use the sensor to correct for filament diameter deviations w
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="#">InFiDEL</a></h1>
+<h1 class="logo"><a href="index.html">InFiDEL</a></h1>
 
 
 
@@ -77,17 +74,20 @@ The main idea is to use the sensor to correct for filament diameter deviations w
 
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bom.html">Bill of materials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="assembly_and_setup.html">Assembly and setup</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Assembly and setup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#calibration">Calibration</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
-  <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="license.html" title="next chapter">License</a></li>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="bom.html" title="previous chapter">Bill of materials</a></li>
   </ul></li>
 </ul>
 </div>
@@ -121,7 +121,7 @@ The main idea is to use the sensor to correct for filament diameter deviations w
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/index.rst.txt"
+      <a href="_sources/assembly_and_setup.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
