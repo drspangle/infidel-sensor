@@ -20,6 +20,6 @@ Based on this proof-of-concept: https://www.youmagine.com/designs/filament-diame
 
 Documentation for this project is now available to read - [https://drspangle.github.io/infidel-sensor/](https://drspangle.github.io/infidel-sensor/)
 
-If you need to build the documentation yourself locally run the following command after cloning the repository in the root directory
+It uses the [Sphinx](https://www.sphinx-doc.org/en/master/index.html) documtation framework and uses GitHub pages for hosting. If you need to build the documentation yourself locally, run the following command after cloning the repository in the root directory
 
 `sphinx-build -b html docs-src/source docs`
