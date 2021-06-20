@@ -144,9 +144,9 @@ The sensor sends an analog signal to Pin 5 [OUT].
 	*   The Led light for 2 sec, the Sensor is getting 100 Samples from the ADC
 	*   If the messure is Ok the Led flash fast
 	*   Remove the drill an press the Button
-*   Step 2 Led flashes 2 Times (1,7mm Drill)
+* Step 2 Led flashes 2 Times (1,7mm Drill)
     *   Insert the Drill 1,7mm and repeat Step 1
-*   Step 3, Led flash 3 times (2mm Drill)
+* Step 3, Led flash 3 times (2mm Drill)
 	*   Insert the Drill with 2mm and repeat Step 1
 
 The Calibration is done
