@@ -34,9 +34,217 @@
             
   <div class="section" id="firmware">
 <h1>Firmware<a class="headerlink" href="#firmware" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="todo">
-<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
-<p>To fill in</p>
+<div class="section" id="files">
+<h2>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>File</p></td>
+<td><p>Note</p></td>
+</tr>
+<tr class="row-even"><td><p>calibration.ino</p></td>
+<td><p>First test firmware by Thomas Sanladerer, it sends the ADC raw value over I2C, insert some drills of known diameters into the sensor and note the ADC value, then put the values into driver.ino and re compile</p></td>
+</tr>
+<tr class="row-odd"><td><p>driver.ino</p></td>
+<td><p>Code for the sensor, it uses a hardcoded table to convert the ADC to Diameter, and sends 2 bytes over I2C – no analog out</p></td>
+</tr>
+<tr class="row-even"><td><p>host-example.ino</p></td>
+<td><p>Reads the 2 bytes of diameter over I2C, and displays it over the UART, used to test the sensor</p></td>
+</tr>
+<tr class="row-odd"><td><p>Host_ee_prog.ino</p></td>
+<td><p>Code for the Host Arduino, uses bidirectional communication with the sensor and has a simple UART Console to do the calibration and sensor testing</p></td>
+</tr>
+<tr class="row-even"><td><p>Infidel_release_ee.ino</p></td>
+<td><p>Firmware for the sensor, table in EEPROM, sets values over I2C</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="setup-and-programming">
+<h2>Setup and Programming<a class="headerlink" href="#setup-and-programming" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Arduino &gt; V1.8.8</p></li>
+<li><p>TinyWireS LIbary from <a class="reference external" href="https://github.com/nadavmatalon/TinyWireS">https://github.com/nadavmatalon/TinyWireS</a></p></li>
+<li><p>ATtiny85 Board for Arduino from <a class="reference external" href="https://github.com/damellis/attiny">https://github.com/damellis/attiny</a></p></li>
+<li><p>ISP Programmer like Arduino over ISP –&gt; <a class="reference external" href="https://www.arduino.cc/en/Tutorial/BuiltInExamples/ArduinoISP">https://www.arduino.cc/en/Tutorial/BuiltInExamples/ArduinoISP</a></p></li>
+</ul>
+<p>Load the code, wire the ISP program to the ISP port on the sensor and program it.</p>
+<p>Remember to set the processor to Attiny85.</p>
+<p>Tools –&gt; Processor: Attiny85</p>
+<p>Tools –&gt; Clock: Internal 1 MHz</p>
+<p>Tools –&gt; Burn bootloader to set the fuses</p>
+<p>Sketch –&gt; Upload with Programmer</p>
+<p>After programming, the LED should flash two times.</p>
+</div>
+</div>
+<div class="section" id="wiring-to-the-host-board">
+<h2>Wiring to the Host Board<a class="headerlink" href="#wiring-to-the-host-board" title="Permalink to this headline">¶</a></h2>
+<p><img alt="Wire Diagram" src="_images/host_to_sensor_arduino.PNG" /></p>
+<p>Connect the the sensor to the host board, such as an Arduino Uno or Mega.</p>
+<p>Program the Host with Host_ee_prog.ino and start the console with 19200 baudrate.</p>
+</div>
+<div class="section" id="console">
+<h2>Console<a class="headerlink" href="#console" title="Permalink to this headline">¶</a></h2>
+<p>On start, the following is shown:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Infidel</span> <span class="n">Sensor</span> <span class="n">Programmer</span>
+<span class="n">Scanning</span><span class="o">...</span>
+<span class="n">I2C</span> <span class="n">device</span> <span class="n">found</span> <span class="n">at</span> <span class="n">address</span> <span class="mi">43</span>
+
+<span class="n">Version</span><span class="p">:</span> <span class="mf">3.12</span>
+<span class="n">Table</span> <span class="p">[</span><span class="n">ADC</span><span class="p">]</span> <span class="p">[</span><span class="n">DIA</span> <span class="ow">in</span> <span class="n">um</span><span class="p">]:</span>
+<span class="mi">00</span><span class="p">:</span> <span class="mi">0000</span> <span class="o">/</span> <span class="mi">3000</span>
+<span class="mi">01</span><span class="p">:</span> <span class="mi">0619</span> <span class="o">/</span> <span class="mi">2090</span>
+<span class="mi">02</span><span class="p">:</span> <span class="mi">0702</span> <span class="o">/</span> <span class="mi">1700</span>
+<span class="mi">03</span><span class="p">:</span> <span class="mi">0817</span> <span class="o">/</span> <span class="mi">1400</span>
+<span class="mi">04</span><span class="p">:</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">1000</span>
+<span class="mi">05</span><span class="p">:</span> <span class="mi">1023</span> <span class="o">/</span> <span class="mi">0000</span>
+<span class="n">Table</span> <span class="p">[</span><span class="n">DAC</span> <span class="nb">min</span> <span class="n">Uout</span> <span class="ow">in</span> <span class="n">uV</span><span class="p">]</span> <span class="p">[</span><span class="n">DAC</span> <span class="nb">max</span> <span class="n">Uout</span> <span class="ow">in</span> <span class="n">uV</span><span class="p">]:</span>
+<span class="mi">09</span><span class="p">:</span> <span class="mi">1344</span> <span class="o">/</span> <span class="mi">2017</span>
+<span class="n">Command</span> <span class="n">Input</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">val</span> <span class="o">/</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">RAW</span> <span class="n">val</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">Version</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">Table</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">-</span> <span class="n">Set</span> <span class="n">Tabel</span> <span class="n">Val</span> <span class="o">/</span> <span class="mi">5</span> <span class="o">-</span> <span class="n">Ongoing</span> <span class="n">raw</span> <span class="n">read</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">-</span> <span class="n">sample</span> <span class="n">Mean</span> <span class="n">ADC</span> <span class="n">Val</span>
+<span class="n">Command</span> <span class="n">Input</span> <span class="mi">7</span> <span class="o">-</span> <span class="n">DAC</span> <span class="mi">0</span> <span class="n">PWW</span> <span class="o">/</span> <span class="mi">8</span> <span class="o">-</span> <span class="n">DAC</span> <span class="mi">255</span> <span class="n">PWM</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 58%" />
+<col style="width: 37%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Commands</p></td>
+<td><p>Note</p></td>
+<td><p>Output</p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Read the Diameter value</p></td>
+<td><p>Diameter [mm]: 2.242</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Read the Diameter + raw ADC Value</p></td>
+<td><p>Diameter [mm] / [ADC]: 2.242 / RAW: 515</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Read the Version</p></td>
+<td><p>Version: 1.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Read the Diameter Table</p></td>
+<td><p>Table [idx] [ADC] [DIA in um]</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Set the Value in the Table</p></td>
+<td><p>Input values for Table [IDX],[ADC],[DIA um] like (1,619,2090)</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>Ongoing reading the ADC raw Value, stop when the command 5 is sent one more time</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>Read Meanvalue from Sensor (100 Samples), Display Min / Max / Mean / cnt, used it for Calibration</p></td>
+<td><p>ADC Mean: 704 / Min: 688 / Max: 713 / Cnt: 100</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>Set DAC to PWM 0 –&gt; for check Output Voltage at LOW</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>Set DAC to PWM 255 –&gt; for check Output Voltage at HIGH</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>h</p></td>
+<td><p>Show the command list</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="calibration">
+<h2>Calibration<a class="headerlink" href="#calibration" title="Permalink to this headline">¶</a></h2>
+<p>Start with the bigger shaft of known diameter (e.g., 2 mm), insert it into the sensor and read the raw ADC value with command “6”.
+Command “6” determines the mean value over 100 measurements and removes the outliers</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ADC</span> <span class="n">Mean</span><span class="p">:</span> <span class="mi">704</span> <span class="o">/</span> <span class="n">Min</span><span class="p">:</span> <span class="mi">688</span> <span class="o">/</span> <span class="n">Max</span><span class="p">:</span> <span class="mi">713</span> <span class="o">/</span> <span class="n">Cnt</span><span class="p">:</span> <span class="mi">100</span>
+</pre></div>
+</div>
+<p>Note the ADC value and use the command “4”.
+The console should show:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Input</span> <span class="n">values</span> <span class="k">for</span> <span class="n">Table</span> <span class="p">[</span><span class="n">IDX</span><span class="p">],[</span><span class="n">ADC</span><span class="p">],[</span><span class="n">DIA</span> <span class="n">um</span><span class="p">]</span> <span class="n">like</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">619</span><span class="p">,</span><span class="mi">2090</span><span class="p">)</span>
+<span class="n">Input</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>Input this string: <cite>1,503,2000</cite>
+Means, Table Index 1 (Command “3”), ADC Val 503, Diameter 3</p>
+<p>Repeat this for the next two Ddiameter (1,7mm, 1,4 mm) and write the values to the sensor.</p>
+<p>At the end check the settings with Command “3”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Table</span> <span class="p">[</span><span class="n">ADC</span><span class="p">]</span> <span class="p">[</span><span class="n">DIA</span> <span class="ow">in</span> <span class="n">um</span><span class="p">]:</span>
+<span class="mi">00</span><span class="p">:</span> <span class="mi">0001</span> <span class="o">/</span> <span class="mi">2999</span>
+<span class="mi">01</span><span class="p">:</span> <span class="mi">0617</span> <span class="o">/</span> <span class="mi">2092</span>
+<span class="mi">02</span><span class="p">:</span> <span class="mi">0722</span> <span class="o">/</span> <span class="mi">1711</span>
+<span class="mi">03</span><span class="p">:</span> <span class="mi">0816</span> <span class="o">/</span> <span class="mi">1401</span>
+<span class="mi">04</span><span class="p">:</span> <span class="mi">0999</span> <span class="o">/</span> <span class="mi">1001</span>
+<span class="mi">05</span><span class="p">:</span> <span class="mi">1022</span> <span class="o">/</span> <span class="mi">0001</span>
+</pre></div>
+</div>
+<p>The values are stored in the EEPROM and will load from the EEPROM at the next power up.</p>
+<p>If you program the sensor with a new firmware over the ISP the EEPROM will be erased and the sensor will start with default settings.</p>
+</div>
+<div class="section" id="calibration-with-button-standalone">
+<h2>Calibration with Button (Standalone)<a class="headerlink" href="#calibration-with-button-standalone" title="Permalink to this headline">¶</a></h2>
+<p>Press the Button at Powerup for 3 sec, if the Calibrationmode start the LED flashes 10 times
+The sensor sends an analog signal to Pin 5 [OUT].</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Step 1, Led Flash 1 Times</dt><dd><ul>
+<li><p>Insert Drill with 1,4mm</p></li>
+<li><p>Wait a short Time, 1-2 sec</p></li>
+<li><p>Press the Button for 1 sec</p></li>
+<li><p>The Led light for 2 sec, the Sensor is getting 100 Samples from the ADC</p></li>
+<li><p>If the messure is Ok the Led flash fast</p></li>
+<li><p>Remove the drill an press the Button</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Step 2 Led flashes 2 Times (1,7mm Drill)
+*   Insert the Drill 1,7mm and repeat Step 1</p></li>
+<li><dl class="simple">
+<dt>Step 3, Led flash 3 times (2mm Drill)</dt><dd><ul>
+<li><p>Insert the Drill with 2mm and repeat Step 1</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>The Calibration is done</p>
+</div>
+<div class="section" id="analog-output">
+<h2>Analog Output<a class="headerlink" href="#analog-output" title="Permalink to this headline">¶</a></h2>
+<p>The sensor sends an analog signal to Pin 5 [OUT].</p>
+<p>The range goes from 1.42 VDC to 2.14 VDC .
+The voltage is the analog for the diameter: 1.73V is equal to 1.73mm diameter.</p>
+</div>
+<div class="section" id="calibrate-the-analog-output">
+<h2>Calibrate the Analog Output<a class="headerlink" href="#calibrate-the-analog-output" title="Permalink to this headline">¶</a></h2>
+<p>Connect a Multimeter to GND and OUT.
+The Analog Output depend on the VCC Voltage, so make the Calibration when the Sensor is connected to the Printerboard
+and not to the unstable USB Port.</p>
+<ul class="simple">
+<li><p>Set with the command “7” the PWM to LOW, meassure the Voltage on Analog OUT and note it (like 1,344 V)</p></li>
+<li><p>Set with the command “8” the PWM to HIGH, meassure the Voltage on Analog OUT and note it (like 2,017 V)</p></li>
+</ul>
+<p>Set with the command “4” the table Value for Index 9 (Calibration Values for DAC)
+IDX 9 then LOW Voltage and the HIGH Voltage –&gt; like: 9,1344,2017</p>
+<p>Check the table with command “3”.
+The Values are stored in the EEPROM for the next Start</p>
+</div>
+<div class="section" id="fault-pin">
+<h2>Fault Pin<a class="headerlink" href="#fault-pin" title="Permalink to this headline">¶</a></h2>
+<p>The fault pin is high when the diameter is bigger than 3mm and smaller than 1.5mm.
+This indicates that the sensor is outside of the normal working range.</p>
 </div>
 </div>
 
@@ -63,7 +271,15 @@
 <li class="toctree-l1"><a class="reference internal" href="bom.html">Bill of materials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="assembly_and_setup.html">Assembly and setup</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Firmware</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#todo">TODO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-and-programming">Setup and Programming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wiring-to-the-host-board">Wiring to the Host Board</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#console">Console</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calibration">Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calibration-with-button-standalone">Calibration with Button (Standalone)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analog-output">Analog Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calibrate-the-analog-output">Calibrate the Analog Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fault-pin">Fault Pin</a></li>
 </ul>
 </li>
 </ul>
