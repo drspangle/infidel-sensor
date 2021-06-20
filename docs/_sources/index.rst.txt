@@ -22,3 +22,4 @@ Based on this proof-of-concept: https://www.youmagine.com/designs/filament-diame
    license
    bom
    assembly_and_setup
+   firmware
