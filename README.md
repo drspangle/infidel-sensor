@@ -16,6 +16,8 @@ The main idea is to use the sensor to correct for filament diameter deviations w
 
 Based on this proof-of-concept: https://www.youmagine.com/designs/filament-diameter-sensor
 
+Detailed documention for InFiDEL: https://drspangle.github.io/infidel-sensor/
+
 ## Assembly and Setup
 [![Assembly and Setup Instructions on Youtube](https://img.youtube.com/vi/RYgdLPe_T0c/0.jpg)](https://www.youtube.com/watch?v=RYgdLPe_T0c)
 
