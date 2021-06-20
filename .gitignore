@@ -1,3 +1,4 @@
 
 # ignoring only the doctrees folder
 doctrees/
+.doctrees/
