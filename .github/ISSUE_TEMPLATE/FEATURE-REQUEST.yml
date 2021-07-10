@@ -1,7 +1,7 @@
 name: Feature request
 description: Request a new feature
-title: "[Bug]: "
-labels: [bug]
+title: "[FR]: "
+labels: [new-feature]
 body:
   - type: textarea
     id: related
@@ -9,7 +9,6 @@ body:
       label: Any related problems?
       description: Is your feature request related to a problem? Please describe.
       placeholder: Related problems..
-      value: None
   - type: textarea
     id: request
     attributes:
@@ -24,4 +23,3 @@ body:
       label: Additional context?
       description: If you want to add screenshots, code, etc., please do it here.
       placeholder: Additional info
-      value: None

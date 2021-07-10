@@ -21,7 +21,6 @@ body:
       label: Any solutions?
       description: If you have an idea on how to fix this, please add it here.
       placeholder: Tell us what you think!
-      value: None
   - type: textarea
     id: additional
     attributes:
