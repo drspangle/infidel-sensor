@@ -80,9 +80,3 @@ Pins may be replaced with screws or grubscrews, which may result in decreased pr
 
 Drill bits may be replaced with similar diameters. 
 Measured diameter is to be written to firmware lookup table.
-
-## Documentation
-
-It uses the [Sphinx](https://www.sphinx-doc.org/en/master/index.html) documentation framework and uses GitHub pages for hosting. If you need to build the documentation yourself locally, run the following command after cloning the repository in the root directory
-
-`sphinx-build -b html docs-src/source docs`
