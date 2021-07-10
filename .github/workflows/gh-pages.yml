@@ -1,0 +1,35 @@
+name: documentation
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  update-gh-pages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          THEME=$(grep -oP '(?<=html_theme = ").+?(?=")' docs/conf.py)
+          python3 -m pip install --upgrade pip
+          pip install sphinx $THEME
+          python3 setup.py install
+      - name: Change conf.py version
+        run: |
+          sed -i -E 's|release = ".*?"|release = "${{ github.event.release.tag_name }}"|g' docs/conf.py
+      - name: Build using sphinx
+        run: |
+          sphinx-build -M html docs/ build/
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages
+          folder: build/html
