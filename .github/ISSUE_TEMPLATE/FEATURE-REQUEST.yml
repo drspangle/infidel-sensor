@@ -2,7 +2,6 @@ name: Feature request
 description: Request a new feature
 title: "[Bug]: "
 labels: [bug]
-assignees: ""
 body:
   - type: textarea
     id: related
