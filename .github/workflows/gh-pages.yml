@@ -26,6 +26,8 @@ jobs:
       - name: Build using sphinx
         run: |
           sphinx-build -M html docs/ build/
+          cd build/html
+          touch .nojekyll
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
