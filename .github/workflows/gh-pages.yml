@@ -3,7 +3,6 @@ name: documentation
 on:
   release:
     types: [published]
-  workflow_dispatch:
 
 jobs:
   update-gh-pages:
@@ -21,7 +20,6 @@ jobs:
           THEME=$(grep -oP '(?<=html_theme = ").+?(?=")' docs/conf.py)
           python3 -m pip install --upgrade pip
           pip install sphinx $THEME
-          python3 setup.py install
       - name: Change conf.py version
         run: |
           sed -i -E 's|release = ".*?"|release = "${{ github.event.release.tag_name }}"|g' docs/conf.py
