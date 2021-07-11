@@ -3,7 +3,7 @@
 <eagle version="9.6.2">
 <drawing>
 <settings>
-<setting alwaysvectorfont="yes"/>
+<setting alwaysvectorfont="no"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
@@ -10094,6 +10094,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 </net>
 <net name="OUT" class="0">
 <segment>
+<wire x1="96.52" y1="48.26" x2="88.9" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="48.26" x2="93.98" y2="48.26" width="0.1524" layer="91"/>
 <label x="96.52" y="48.26" size="1.778" layer="95"/>
 <pinref part="C1" gate="G$1" pin="1"/>
@@ -10309,8 +10310,8 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 </sheet>
 </sheets>
 <errors>
+<approved hash="104,1,48.26,58.42,IC1,VCC,+5V,,,"/>
 <approved hash="104,1,129.54,53.34,IC2,VCC,+5V,,,"/>
-<approved hash="104,1,-12.7,58.42,IC3,VCC,+5V,,,"/>
 </errors>
 </schematic>
 </drawing>
