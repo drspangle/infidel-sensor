@@ -1,4 +1,4 @@
-name: documentation
+name: build-docs
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   update-gh-pages:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v2
