@@ -15,7 +15,10 @@ Calibration
 - Finally, flash driver.ino with your values filled out
 - Hub should now output exact diameter values
 
-    Note: Analog output is currently not enabled in driver.ino (I2C and FAULT pin only)
+    Note:
+    Analog output is currently not enabled in driver.ino (I2C and FAULT pin only).
+    If you need analog output, you can use Infidel_release_ee.ino.
+    See :doc:`firmware` for more details.
 
 .. |Image| image:: https://img.youtube.com/vi/RYgdLPe_T0c/0.jpg
            :alt: Assembly and Setup Instructions on Youtube
